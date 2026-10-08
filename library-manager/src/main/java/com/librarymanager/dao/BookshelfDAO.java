@@ -1,6 +1,6 @@
-package com.booklibrary.dao;
+package com.librarymanager.dao;
 
-import com.booklibrary.model.Bookshelf;
+import com.librarymanager.model.Bookshelf;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,13 +54,11 @@ public interface BookshelfDAO {
     /**
      * Deletes a bookshelf by id. The database enforces
      * {@code ON DELETE RESTRICT} on {@code book.bookshelf_id}, so this
-     * will fail if any book still references this bookshelf; callers
-     * should catch {@link com.booklibrary.exception.DataAccessException}
-     * and inform the user to reassign or delete those books first.
+     * will fail if any book still references this bookshelf. Callers
+     * should inform the user to remove or reassign those books first.
      *
      * @param id the bookshelf id to delete
      */
-    // DELETE: fails if books still point to this shelf (foreign key restriction),
-    // so the caller must handle the resulting exception.
+    // DELETE: fails if books still point to this shelf (foreign key restriction).
     void delete(int id);
 }
