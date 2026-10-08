@@ -1,6 +1,4 @@
-package com.booklibrary.model;
-
-import java.util.Objects;
+package com.librarymanager.model;
 
 /**
  * Domain entity representing a physical storage location for books,
@@ -47,10 +45,8 @@ public class Bookshelf {
     // Used when creating a NEW shelf that does not yet exist in the database.
     // No id is passed in, since the database generates it (auto-increment)
     // when the row is inserted. Until then, id remains 0.
-    // Note: the requirement that name must not be null/blank is only stated in
-    // the documentation; it is not enforced here (validation must happen elsewhere).
     public Bookshelf(String name, String room, Integer shelfNumber, String description) {
-        this.name = name;
+        this.name = requireName(name);
         this.room = room;
         this.shelfNumber = shelfNumber;
         this.description = description;
@@ -70,8 +66,11 @@ public class Bookshelf {
     // This is constructor overloading: two constructors with the same name
     // but different parameter lists.
     public Bookshelf(int id, String name, String room, Integer shelfNumber, String description) {
+        if (id < 0) {
+            throw new IllegalArgumentException("Bookshelf id cannot be negative.");
+        }
         this.id = id;
-        this.name = name;
+        this.name = requireName(name);
         this.room = room;
         this.shelfNumber = shelfNumber;
         this.description = description;
@@ -87,6 +86,9 @@ public class Bookshelf {
 
     // Sets the id after the database has generated it, e.g. right after an INSERT.
     public void setId(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Persisted bookshelf id must be positive.");
+        }
         this.id = id;
     }
 
@@ -95,7 +97,7 @@ public class Bookshelf {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = requireName(name);
     }
 
     public String getRoom() {
@@ -122,6 +124,13 @@ public class Bookshelf {
         this.description = description;
     }
 
+    private static String requireName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Bookshelf name is required.");
+        }
+        return name.trim();
+    }
+
     // ===== Overridden methods from Object =====
 
     // Defines how the object is displayed as text, e.g. in a dropdown list
@@ -132,25 +141,19 @@ public class Bookshelf {
         return room != null ? name + " (" + room + ")" : name;
     }
 
-    // Defines when two Bookshelf objects are considered "equal".
-    // Only the id (the database primary key) is compared, since it uniquely
-    // identifies a shelf. Two objects with the same id represent the same shelf.
+    // Unsaved shelves have no stable database identity, so only the same
+    // instance can be equal until both objects have persisted ids.
     @Override
     public boolean equals(Object o) {
-        // Same object in memory, so always equal (fast shortcut).
         if (this == o) return true;
-        // If the other object is not a Bookshelf (or is null), they cannot be equal.
         if (!(o instanceof Bookshelf)) return false;
-        // The cast is safe because we just checked the type.
         Bookshelf bookshelf = (Bookshelf) o;
-        return id == bookshelf.id;
+        return id > 0 && bookshelf.id > 0 && id == bookshelf.id;
     }
 
-    // Must always be overridden together with equals(): objects that are equal
-    // must produce the same hash code. Based on the same field (id) as equals().
-    // Important for the objects to work correctly in HashSet, HashMap, etc.
+    // Keep the hash stable when a new shelf receives its database id.
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Bookshelf.class.hashCode();
     }
 }

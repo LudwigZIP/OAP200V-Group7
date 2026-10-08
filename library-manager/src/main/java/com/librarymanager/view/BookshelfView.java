@@ -1,7 +1,7 @@
-package com.booklibrary.ui;
+package com.librarymanager.view;
 
-import com.booklibrary.model.Bookshelf;
-import com.booklibrary.service.LibraryService;
+import com.librarymanager.controller.BookshelfController;
+import com.librarymanager.model.Bookshelf;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -22,8 +22,7 @@ import javafx.scene.layout.VBox;
 // placed directly in a scene. Table goes in the center, form on the right.
 public class BookshelfView extends BorderPane {
 
-    // The service handles business logic and database access; the UI never talks to the DAO directly.
-    private final LibraryService service;
+    private final BookshelfController controller;
     // Callback to let the rest of the app (e.g. other views) know that data has changed.
     private final Runnable onDataChanged;
 
@@ -42,11 +41,11 @@ public class BookshelfView extends BorderPane {
     private Bookshelf selectedShelf;
 
     /**
-     * @param service       shared library service
+     * @param controller    bookshelf operations
      * @param onDataChanged callback invoked after any add/edit/delete
      */
-    public BookshelfView(LibraryService service, Runnable onDataChanged) {
-        this.service = service;
+    public BookshelfView(BookshelfController controller, Runnable onDataChanged) {
+        this.controller = controller;
         this.onDataChanged = onDataChanged;
         setPadding(new Insets(10));
 
@@ -125,7 +124,7 @@ public class BookshelfView extends BorderPane {
 
     // Reloads all shelves from the database into the table.
     private void refresh() {
-        data.setAll(service.getAllBookshelves());
+        data.setAll(controller.getAllBookshelves());
     }
 
     // Copies the selected shelf's values into the form fields.
@@ -152,8 +151,7 @@ public class BookshelfView extends BorderPane {
         table.getSelectionModel().clearSelection();
     }
 
-    // Converts the shelf number text to an Integer.
-    // Returns null if the field is empty or not a valid whole number.
+    // Converts the shelf number text to an Integer; empty means no shelf number.
     private Integer parseShelfNumber() {
         String text = shelfNumberField.getText() == null ? "" : shelfNumberField.getText().trim();
         if (text.isEmpty()) {
@@ -162,8 +160,31 @@ public class BookshelfView extends BorderPane {
         try {
             return Integer.parseInt(text);
         } catch (NumberFormatException e) {
-            showInfo("Shelf number must be a whole number. It will be left empty.");
-            return null;
+            throw new IllegalArgumentException("Shelf number must be a whole number.", e);
+        }
+    }
+
+    private Bookshelf readForm() {
+        String name = nameField.getText();
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Bookshelf name is required.");
+        }
+        return new Bookshelf(name.trim(), roomField.getText(),
+                parseShelfNumber(), descriptionField.getText());
+    }
+
+    private void refreshAfterChange() {
+        try {
+            refresh();
+        } catch (Exception ex) {
+            showError("Bookshelf was saved, but the list could not be refreshed", ex);
+        }
+        if (onDataChanged != null) {
+            try {
+                onDataChanged.run();
+            } catch (Exception ex) {
+                showError("Bookshelf was saved, but related views could not be refreshed", ex);
+            }
         }
     }
 
@@ -171,16 +192,21 @@ public class BookshelfView extends BorderPane {
 
     // CREATE: builds a new Bookshelf from the form and saves it.
     private void addShelf() {
+        Bookshelf shelf;
         try {
-            Bookshelf shelf = new Bookshelf(nameField.getText().trim(), roomField.getText(),
-                    parseShelfNumber(), descriptionField.getText());
-            service.addBookshelf(shelf);
-            refresh();
-            clearForm();
-            notifyChanged();
+            shelf = readForm();
+        } catch (IllegalArgumentException ex) {
+            showInfo(ex.getMessage());
+            return;
+        }
+        try {
+            controller.addBookshelf(shelf);
         } catch (Exception ex) {
             showError("Failed to add bookshelf", ex);
+            return;
         }
+        clearForm();
+        refreshAfterChange();
     }
 
     // UPDATE: writes the form values into the selected shelf and saves it.
@@ -189,17 +215,22 @@ public class BookshelfView extends BorderPane {
             showInfo("Select a bookshelf in the table first.");
             return;
         }
+        Bookshelf updatedShelf;
         try {
-            selectedShelf.setName(nameField.getText().trim());
-            selectedShelf.setRoom(roomField.getText());
-            selectedShelf.setShelfNumber(parseShelfNumber());
-            selectedShelf.setDescription(descriptionField.getText());
-            service.updateBookshelf(selectedShelf);
-            refresh();
-            notifyChanged();
+            Bookshelf formValues = readForm();
+            updatedShelf = new Bookshelf(selectedShelf.getId(), formValues.getName(),
+                    formValues.getRoom(), formValues.getShelfNumber(), formValues.getDescription());
+        } catch (IllegalArgumentException ex) {
+            showInfo(ex.getMessage());
+            return;
+        }
+        try {
+            controller.updateBookshelf(updatedShelf);
         } catch (Exception ex) {
             showError("Failed to update bookshelf", ex);
+            return;
         }
+        refreshAfterChange();
     }
 
     // DELETE: asks for confirmation, then removes the selected shelf.
@@ -208,35 +239,30 @@ public class BookshelfView extends BorderPane {
             showInfo("Select a bookshelf in the table first.");
             return;
         }
+        int selectedId = selectedShelf.getId();
+        String selectedName = selectedShelf.getName();
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "Delete bookshelf \"" + selectedShelf.getName() + "\"?\n\n"
-                        + "Note: this will fail if any book still references this shelf "
-                        + "(the database requires every book to have a bookshelf).",
+                "Delete bookshelf \"" + selectedName + "\"?\n\n"
+                        + "This will fail if any books still reference this shelf. "
+                        + "Remove or reassign those books before deleting the shelf.",
                 ButtonType.YES, ButtonType.NO);
         // Only delete if the user clicks YES. Errors (e.g. foreign key
         // violation when books still use the shelf) are shown in an error dialog.
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 try {
-                    service.removeBookshelf(selectedShelf.getId());
-                    refresh();
-                    clearForm();
-                    notifyChanged();
+                    controller.removeBookshelf(selectedId);
                 } catch (Exception ex) {
                     showError("Failed to delete bookshelf", ex);
+                    return;
                 }
+                clearForm();
+                refreshAfterChange();
             }
         });
     }
 
     // ===== Notifications and dialogs =====
-
-    // Tells the rest of the app that data changed (if a callback was provided).
-    private void notifyChanged() {
-        if (onDataChanged != null) {
-            onDataChanged.run();
-        }
-    }
 
     // Shows a simple information popup.
     private void showInfo(String message) {
