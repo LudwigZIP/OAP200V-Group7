@@ -9,8 +9,21 @@ import com.librarymanager.dao.GenreDAO;
 import com.librarymanager.model.Genre;
 
 /**
+ * Controller class responsible for managing Genre operations in the application.
+ * Acts as the intermediary layer between the user interface and the data access layer (DAO).
+ *
+ * Responsibilities:
+ * - Retrieve all genres from the database.
+ * - Create and store new Genre objects.
+ * - Update existing Genre entries.
+ * - Delete genres by their unique identifier.
+ *
+ * The controller delegates all persistence-related work to GenreDAO,
+ * ensuring a clean separation between business logic and data handling.
+ *
  * @author: Erika Marie Gåsland
  */
+
 
 // This class is the controller for the Genre feature.
 // It acts as the middle layer between the user interface and the database access layer.
