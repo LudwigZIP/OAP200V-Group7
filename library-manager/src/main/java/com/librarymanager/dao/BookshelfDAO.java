@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * Data-access contract for {@link Bookshelf} persistence operations.
  *
- * <p>Author: [Team member name] — responsible for bookshelf persistence.</p>
+ * <p>Author: [Thomas Mølnvik] — responsible for bookshelf persistence.</p>
  */
 // This is an interface: it only declares WHAT operations exist, not HOW they work.
 // A separate class (e.g. a JDBC implementation) provides the actual SQL code.
