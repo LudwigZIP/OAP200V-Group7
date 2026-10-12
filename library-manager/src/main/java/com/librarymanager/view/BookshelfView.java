@@ -16,7 +16,7 @@ import javafx.scene.layout.VBox;
  * Reference-data management screen for {@link Bookshelf} records: lists
  * all bookshelves and allows adding, editing, and deleting them.
  *
- * <p>Author: [Team member name] — responsible for bookshelf management UI.</p>
+ * <p>Author: [Thomas Mølnvik] — responsible for bookshelf management UI.</p>
  */
 // The view extends BorderPane, so it is itself a layout node that can be
 // placed directly in a scene. Table goes in the center, form on the right.
