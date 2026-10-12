@@ -7,7 +7,7 @@ package com.librarymanager.model;
  * <p>Maps directly to the {@code bookshelf} table in the MySQL database
  * (name, room, an integer shelf number, and a free-text description).</p>
  *
- * <p>Author: [Team member name] — responsible for domain model design
+ * <p>Author: [Thomas Mølnvik] — responsible for domain model design
  * and bookshelf-related persistence logic.</p>
  */
 public class Bookshelf {
