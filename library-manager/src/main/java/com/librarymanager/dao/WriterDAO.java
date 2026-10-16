@@ -30,14 +30,6 @@ public interface WriterDAO {
     void deleteWriter(Writer writer);
 
     /**
-     * Finds a writer by their ID
-     * 
-     * @param writerId the ID of the writer
-     * @return containing the writer if found
-     */
-    Optional<Writer> findById(int writerId);
-
-    /**
      * Retrieves all the writers from the database
      * 
      * @return a list of all writers
