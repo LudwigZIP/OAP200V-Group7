@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Implements database operations for writers.
  */
-public class WriterDaoImpl implements WriterDAO {
+public class WriterDAOImpl implements WriterDAO {
 
     /**
      * Creates a new writer in the database.

@@ -1,9 +1,7 @@
 package com.librarymanager.dao;
 
 import com.librarymanager.model.Writer;
-
 import java.util.List;
-import java.util.Optional;
 
 public interface WriterDAO {
     
