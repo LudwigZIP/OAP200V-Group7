@@ -1,5 +1,36 @@
 package com.librarymanager.model;
 
+/**
+ * Model class representing a Genre entity in the application.
+ * A Genre consists of two pieces of information:
+ * - a unique database-generated ID
+ * - a name describing the genre (e.g., "Science Fiction", "Romance")
+ *
+ * This class is part of the application's model layer and is used by
+ * controllers, DAO implementations, and JavaFX views to represent
+ * genre data consistently throughout the system.
+ *
+ * Constructors:
+ * - Genre(String name):
+ *      Used when creating a new genre before it is saved to the database.
+ *      The ID is not yet known and will be assigned automatically by the database.
+ *
+ * - Genre(int id, String name):
+ *      Used when reading an existing genre from the database,
+ *      where both ID and name are already known.
+ *
+ * Getters and setters provide access to the genre's fields and allow
+ * the controller or DAO to modify or retrieve values when needed.
+ *
+ * The toString() method returns the genre's name, making the object
+ * display-friendly in UI components such as lists, tables, or dropdown menus.
+ * This ensures that when a Genre object is shown in the interface,
+ * the user sees the genre name rather than a technical object reference.
+ * 
+ * @author: Erika Marie Gåsland
+ */
+
+
 public class Genre {
     
     //This is the unique ID for the genre in the database. 
