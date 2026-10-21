@@ -1,7 +1,9 @@
 package com.librarymanager.view;
 
+// Import statements for the Genre model class used in this view.
 import com.librarymanager.model.Genre;
 
+// Import statements for JavaFX classes used to build the user interface.
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
