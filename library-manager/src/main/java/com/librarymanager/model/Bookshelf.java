@@ -13,7 +13,6 @@ package com.librarymanager.model;
 public class Bookshelf {
 
     // ===== Fields =====
-    // Each field corresponds to a column in the "bookshelf" table.
 
     // Primary key. Stays 0 as long as the object has not been saved to the
     // database (int defaults to 0). The database generates the real value.
@@ -76,15 +75,20 @@ public class Bookshelf {
         this.description = description;
     }
 
-    // ===== Getters and setters =====
-    // Standard encapsulation: fields are private, and other classes
-    // read them via getX() and modify them via setX().
-
+    /**
+     * Returns the database ID, or 0 while this bookshelf is not persisted.
+     *
+     * @return the bookshelf ID
+     */
     public int getId() {
         return id;
     }
 
-    // Sets the id after the database has generated it, e.g. right after an INSERT.
+    /**
+     * Sets the generated database ID after the bookshelf has been inserted.
+     *
+     * @param id the positive database ID
+     */
     public void setId(int id) {
         if (id <= 0) {
             throw new IllegalArgumentException("Persisted bookshelf id must be positive.");
@@ -92,38 +96,81 @@ public class Bookshelf {
         this.id = id;
     }
 
+    /**
+     * Returns the display name of this bookshelf.
+     *
+     * @return the bookshelf name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the display name, which must not be blank.
+     *
+     * @param name the new bookshelf name
+     */
     public void setName(String name) {
         this.name = requireName(name);
     }
 
+    /**
+     * Returns the room where this bookshelf is located.
+     *
+     * @return the room, or null when it has not been set
+     */
     public String getRoom() {
         return room;
     }
 
+    /**
+     * Sets the room where this bookshelf is located.
+     *
+     * @param room the room, or null when it is not specified
+     */
     public void setRoom(String room) {
         this.room = room;
     }
 
+    /**
+     * Returns the optional shelf number.
+     *
+     * @return the shelf number, or null when it has not been set
+     */
     public Integer getShelfNumber() {
         return shelfNumber;
     }
 
+    /**
+     * Sets the optional shelf number.
+     *
+     * @param shelfNumber the shelf number, or null when it is not specified
+     */
     public void setShelfNumber(Integer shelfNumber) {
         this.shelfNumber = shelfNumber;
     }
 
+    /**
+     * Returns the optional description.
+     *
+     * @return the description, or null when it has not been set
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets the optional description.
+     *
+     * @param description the description, or null when it is not specified
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Validates and trims a bookshelf name.
+     */
     private static String requireName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Bookshelf name is required.");
@@ -131,27 +178,40 @@ public class Bookshelf {
         return name.trim();
     }
 
-    // ===== Overridden methods from Object =====
-
-    // Defines how the object is displayed as text, e.g. in a dropdown list
-    // or in printed output. Returns "Name (Room)" if a room exists, otherwise just "Name".
-    // Example: "Shelf A (Living room)" or "Shelf B".
+    /**
+     * Returns a readable label for use in text-based controls.
+     *
+     * @return the bookshelf name, optionally followed by its room
+     */
     @Override
     public String toString() {
         return room != null ? name + " (" + room + ")" : name;
     }
 
-    // Unsaved shelves have no stable database identity, so only the same
-    // instance can be equal until both objects have persisted ids.
+    /**
+     * Compares persisted bookshelves by database ID. Unsaved instances compare
+     * equal only when they are the same object.
+     *
+     * @param o the object to compare
+     * @return true when both references identify the same bookshelf
+     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Bookshelf)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Bookshelf)) {
+            return false;
+        }
         Bookshelf bookshelf = (Bookshelf) o;
         return id > 0 && bookshelf.id > 0 && id == bookshelf.id;
     }
 
-    // Keep the hash stable when a new shelf receives its database id.
+    /**
+     * Returns a hash code that remains stable when a new bookshelf receives an ID.
+     *
+     * @return the hash code
+     */
     @Override
     public int hashCode() {
         return Bookshelf.class.hashCode();
