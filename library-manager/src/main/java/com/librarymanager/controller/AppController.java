@@ -24,17 +24,17 @@ public class AppController {
         conn = DatabaseConnection.getConnection();
         if (conn != null) {
             // Creates DAOs
-            bookDao = new BookDaoImpl(conn);
-            bookshelfDao = new BookshelfDaoImpl(conn);
-            genreDao = new GenreDaoImpl(conn);
-            writerDao = new WriterDaoImpl(conn);
+            // bookDao = new BookDAOImpl(conn);
+            // bookshelfDao = new BookshelfDAOImpl(conn);
+            // genreDao = new GenreDAOImpl(conn);
+            // writerDao = new WriterDAOImpl(conn);
         } else {
             AlertUtils.showError("Could not connect to the database.");
             Platform.exit();
         }
     }
 
-    private void handleCheckDb() {
+    public void handleCheckDb() {
         try (Connection test = DatabaseConnection.getConnection()) {
             if (test != null && !test.isClosed()) {
                 AlertUtils.showInfo("Database Connection", "Successfully connected to the database.");
