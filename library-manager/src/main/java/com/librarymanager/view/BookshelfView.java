@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 
 /**
  * View for displaying and editing bookshelves.
- *
+ * @author Thomas Molnvik
  * <p>The controller connects the buttons and table selection to application
  * actions; this class is responsible for constructing the interface.</p>
  */
