@@ -1,11 +1,11 @@
 package com.librarymanager.view;
 
 import com.librarymanager.controller.AppController;
+import com.librarymanager.controller.BookshelfController;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
 /**
@@ -29,10 +29,8 @@ public class MainView extends VBox {
 
     private final WriterView writerView = new WriterView();
     private final GenreView genreView = new GenreView();
-    // private final BookshelfView bookshelfView = new BookshelfView();
-    private final VBox bookshelfView = new VBox(
-    new Label("Bookshelf view not connected")
-    );
+    private final BookshelfView bookshelfView = new BookshelfView();
+    private final BookshelfController bookshelfController;
 
     /**
     * Constructs the main application view.
@@ -42,6 +40,9 @@ public class MainView extends VBox {
     */
 
     public MainView(AppController appController) {
+
+        bookshelfController = new BookshelfController(
+            bookshelfView, appController.getBookshelfDao());
 
         Button testDbButton = new Button("Check Database Connection");
 

@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import com.librarymanager.dao.BookDAO;
 import com.librarymanager.dao.BookshelfDAO;
+import com.librarymanager.dao.BookshelfDAOImpl;
 import com.librarymanager.dao.GenreDAO;
 import com.librarymanager.dao.WriterDAO;
 import com.librarymanager.util.AlertUtils;
@@ -15,7 +16,7 @@ public class AppController {
     private Connection conn;
 
     private BookDAO bookDao;
-    private BookshelfDAO bookshelfDao;
+    private final BookshelfDAO bookshelfDao = new BookshelfDAOImpl();
     private GenreDAO genreDao;
     private WriterDAO writerDao;
 
@@ -23,15 +24,23 @@ public class AppController {
         // Connects to the db
         conn = DatabaseConnection.getConnection();
         if (conn != null) {
-            // Creates DAOs
+            // Creates the remaining DAOs when their implementations are available.
             // bookDao = new BookDAOImpl(conn);
-            // bookshelfDao = new BookshelfDAOImpl(conn);
             // genreDao = new GenreDAOImpl(conn);
             // writerDao = new WriterDAOImpl(conn);
         } else {
             AlertUtils.showError("Could not connect to the database.");
             Platform.exit();
         }
+    }
+
+    /**
+     * Returns the DAO used by the bookshelf screen.
+     *
+     * @return the bookshelf DAO
+     */
+    public BookshelfDAO getBookshelfDao() {
+        return bookshelfDao;
     }
 
     public void handleCheckDb() {
