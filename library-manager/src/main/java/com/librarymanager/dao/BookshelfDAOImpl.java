@@ -57,8 +57,8 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public Optional<Bookshelf> findById(int id) {
-        String sql = "SELECT id, name, room, shelf_number, description "
-                + "FROM bookshelf WHERE id = ?";
+        String sql = "SELECT bookshelf_id, name, room, shelf_number, description "
+                + "FROM bookshelf WHERE bookshelf_id = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -82,7 +82,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public List<Bookshelf> findAll() {
-        String sql = "SELECT id, name, room, shelf_number, description "
+        String sql = "SELECT bookshelf_id, name, room, shelf_number, description "
                 + "FROM bookshelf ORDER BY name";
         List<Bookshelf> bookshelves = new ArrayList<>();
 
@@ -107,7 +107,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     @Override
     public void update(Bookshelf bookshelf) {
         String sql = "UPDATE bookshelf SET name = ?, room = ?, shelf_number = ?, "
-                + "description = ? WHERE id = ?";
+                + "description = ? WHERE bookshelf_id = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -127,7 +127,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public void delete(int id) {
-        String sql = "DELETE FROM bookshelf WHERE id = ?";
+        String sql = "DELETE FROM bookshelf WHERE bookshelf_id = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -173,7 +173,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
         Integer shelfNumber = resultSet.wasNull() ? null : shelfNumberValue;
 
         return new Bookshelf(
-                resultSet.getInt("id"),
+                resultSet.getInt("bookshelf_id"),
                 resultSet.getString("name"),
                 resultSet.getString("room"),
                 shelfNumber,
