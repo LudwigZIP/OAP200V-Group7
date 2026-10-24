@@ -5,7 +5,8 @@ package com.librarymanager.model;
  * e.g., a shelf in a particular room.
  *
  * <p>Maps directly to the {@code bookshelf} table in the MySQL database
- * (name, room, an integer shelf number, and a free-text description).</p>
+ * ({@code bookshelfId}, {@code bookshelfName}, {@code bookshelfRoom}, and
+ * {@code BookshelfNumber}).</p>
  *
  * <p>Author: [Thomas Mølnvik] — responsible for domain model design
  * and bookshelf-related persistence logic.</p>
@@ -28,9 +29,6 @@ public class Bookshelf {
     // whereas a primitive int must always hold a value.
     private Integer shelfNumber;
 
-    // Free-text description of the shelf. May be null.
-    private String description;
-
     // ===== Constructors =====
 
     /**
@@ -39,16 +37,14 @@ public class Bookshelf {
      * @param name        display name of the shelf, must not be null or blank
      * @param room        room where the shelf is located, may be null
      * @param shelfNumber numeric identifier of the shelf, may be null
-     * @param description free-text description, may be null
      */
     // Used when creating a NEW shelf that does not yet exist in the database.
     // No id is passed in, since the database generates it (auto-increment)
     // when the row is inserted. Until then, id remains 0.
-    public Bookshelf(String name, String room, Integer shelfNumber, String description) {
+    public Bookshelf(String name, String room, Integer shelfNumber) {
         this.name = requireName(name);
         this.room = room;
         this.shelfNumber = shelfNumber;
-        this.description = description;
     }
 
     /**
@@ -58,13 +54,12 @@ public class Bookshelf {
      * @param name        display name of the shelf
      * @param room        room where the shelf is located, may be null
      * @param shelfNumber numeric identifier of the shelf, may be null
-     * @param description free-text description, may be null
      */
     // Used when reading an EXISTING row from the database and building an object from it.
     // The id is already known, so it is passed in.
     // This is constructor overloading: two constructors with the same name
     // but different parameter lists.
-    public Bookshelf(int id, String name, String room, Integer shelfNumber, String description) {
+    public Bookshelf(int id, String name, String room, Integer shelfNumber) {
         if (id < 0) {
             throw new IllegalArgumentException("Bookshelf id cannot be negative.");
         }
@@ -72,7 +67,6 @@ public class Bookshelf {
         this.name = requireName(name);
         this.room = room;
         this.shelfNumber = shelfNumber;
-        this.description = description;
     }
 
     /**
@@ -148,24 +142,6 @@ public class Bookshelf {
      */
     public void setShelfNumber(Integer shelfNumber) {
         this.shelfNumber = shelfNumber;
-    }
-
-    /**
-     * Returns the optional description.
-     *
-     * @return the description, or null when it has not been set
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the optional description.
-     *
-     * @param description the description, or null when it is not specified
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**
