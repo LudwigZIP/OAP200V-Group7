@@ -26,8 +26,9 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public Bookshelf create(Bookshelf bookshelf) {
-        String sql = "INSERT INTO bookshelf (name, room, shelf_number, description) "
-                + "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO bookshelf "
+                + "(bookshelfName, bookshelfRoom, BookshelfNumber) "
+                + "VALUES (?, ?, ?)";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -57,8 +58,8 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public Optional<Bookshelf> findById(int id) {
-        String sql = "SELECT bookshelf_id, name, room, shelf_number, description "
-                + "FROM bookshelf WHERE bookshelf_id = ?";
+        String sql = "SELECT bookshelfId, bookshelfName, bookshelfRoom, BookshelfNumber "
+                + "FROM bookshelf WHERE bookshelfId = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -82,8 +83,8 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public List<Bookshelf> findAll() {
-        String sql = "SELECT bookshelf_id, name, room, shelf_number, description "
-                + "FROM bookshelf ORDER BY name";
+        String sql = "SELECT bookshelfId, bookshelfName, bookshelfRoom, BookshelfNumber "
+                + "FROM bookshelf ORDER BY bookshelfName";
         List<Bookshelf> bookshelves = new ArrayList<>();
 
         try (Connection connection = openConnection();
@@ -106,14 +107,14 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public void update(Bookshelf bookshelf) {
-        String sql = "UPDATE bookshelf SET name = ?, room = ?, shelf_number = ?, "
-                + "description = ? WHERE bookshelf_id = ?";
+        String sql = "UPDATE bookshelf SET bookshelfName = ?, bookshelfRoom = ?, "
+                + "BookshelfNumber = ? WHERE bookshelfId = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             setBookshelfValues(statement, bookshelf);
-            statement.setInt(5, bookshelf.getId());
+            statement.setInt(4, bookshelf.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to update bookshelf", e);
@@ -127,7 +128,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public void delete(int id) {
-        String sql = "DELETE FROM bookshelf WHERE bookshelf_id = ?";
+        String sql = "DELETE FROM bookshelf WHERE bookshelfId = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -151,7 +152,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Binds the four mutable bookshelf fields to an insert or update statement.
+     * Binds the bookshelf's name, room, and optional number to an SQL statement.
      */
     private void setBookshelfValues(PreparedStatement statement, Bookshelf bookshelf)
             throws SQLException {
@@ -162,21 +163,19 @@ public class BookshelfDAOImpl implements BookshelfDAO {
         } else {
             statement.setInt(3, bookshelf.getShelfNumber());
         }
-        statement.setString(4, bookshelf.getDescription());
     }
 
     /**
      * Creates a Bookshelf from the current row in the result set.
      */
     private Bookshelf readBookshelf(ResultSet resultSet) throws SQLException {
-        int shelfNumberValue = resultSet.getInt("shelf_number");
+        int shelfNumberValue = resultSet.getInt("BookshelfNumber");
         Integer shelfNumber = resultSet.wasNull() ? null : shelfNumberValue;
 
         return new Bookshelf(
-                resultSet.getInt("bookshelf_id"),
-                resultSet.getString("name"),
-                resultSet.getString("room"),
-                shelfNumber,
-                resultSet.getString("description"));
+                resultSet.getInt("bookshelfId"),
+                resultSet.getString("bookshelfName"),
+                resultSet.getString("bookshelfRoom"),
+                shelfNumber);
     }
 }
