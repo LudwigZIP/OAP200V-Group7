@@ -26,7 +26,8 @@ public class MainView extends VBox {
 
 
     private final TabPane tabPane = new TabPane();
-
+    
+    private final BookView bookView = new BookView();
     private final WriterView writerView = new WriterView();
     private final GenreView genreView = new GenreView();
     private final BookshelfView bookshelfView = new BookshelfView();
@@ -48,6 +49,9 @@ public class MainView extends VBox {
 
         testDbButton.setOnAction(e -> appController.handleCheckDb());
 
+        Tab bookTab = new Tab("Books", bookView);
+        bookTab.setClosable(false);
+
         Tab writerTab = new Tab("Writers", writerView);
         writerTab.setClosable(false);
 
@@ -58,6 +62,7 @@ public class MainView extends VBox {
         bookshelfTab.setClosable(false);
 
         tabPane.getTabs().addAll(
+            bookTab,
             writerTab,
             genreTab,
             bookshelfTab
