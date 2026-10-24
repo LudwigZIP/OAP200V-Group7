@@ -1,6 +1,7 @@
 package com.librarymanager.controller;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import com.librarymanager.dao.BookDAO;
 import com.librarymanager.dao.BookshelfDAO;
@@ -13,10 +14,11 @@ import com.librarymanager.util.DatabaseConnection;
 import javafx.application.Platform;
 
 public class AppController {
+
     private Connection conn;
 
     private BookDAO bookDao;
-    private final BookshelfDAO bookshelfDao = new BookshelfDAOImpl();
+    private BookshelfDAO bookshelfDao;
     private GenreDAO genreDao;
     private WriterDAO writerDao;
 
@@ -44,14 +46,16 @@ public class AppController {
     }
 
     public void handleCheckDb() {
-        try (Connection test = DatabaseConnection.getConnection()) {
-            if (test != null && !test.isClosed()) {
-                AlertUtils.showInfo("Database Connection", "Successfully connected to the database.");
-            } else {
-                AlertUtils.showError("Could not establish a database connection.");
+        try {
+            if (conn != null && conn.isValid(2)) {
+                AlertUtils.showInfo("Database Connection", "The database connection is active!");
             }
-        } catch (Exception ex) {
-            AlertUtils.showError("Failed to connect to the database:\n" + ex.getMessage());
+            else {
+                AlertUtils.showError("The database connection is not active!");
+            }
+        }
+        catch (SQLException error) {
+            AlertUtils.showError("Failed to check database connection:\n" + error.getMessage());
         }
     }
 
