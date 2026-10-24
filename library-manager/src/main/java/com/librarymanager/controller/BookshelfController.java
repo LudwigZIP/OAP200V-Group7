@@ -88,8 +88,7 @@ public class BookshelfController {
                 selectedBookshelf.getId(),
                 formValues.getName(),
                 formValues.getRoom(),
-                formValues.getShelfNumber(),
-                formValues.getDescription());
+                formValues.getShelfNumber());
 
         try {
             bookshelfDAO.update(updatedBookshelf);
@@ -154,7 +153,6 @@ public class BookshelfController {
         view.getRoomField().setText(bookshelf.getRoom());
         view.getShelfNumberField().setText(bookshelf.getShelfNumber() == null
                 ? "" : String.valueOf(bookshelf.getShelfNumber()));
-        view.getDescriptionField().setText(bookshelf.getDescription());
     }
 
     /**
@@ -182,8 +180,7 @@ public class BookshelfController {
             }
         }
 
-        return new Bookshelf(name, view.getRoomField().getText(), shelfNumber,
-                view.getDescriptionField().getText());
+        return new Bookshelf(name, view.getRoomField().getText(), shelfNumber);
     }
 
     /**
@@ -198,7 +195,6 @@ public class BookshelfController {
         view.getNameField().clear();
         view.getRoomField().clear();
         view.getShelfNumberField().clear();
-        view.getDescriptionField().clear();
     }
 
     private void showInfo(String message) {

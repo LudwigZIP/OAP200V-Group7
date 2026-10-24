@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
@@ -29,7 +28,6 @@ public class BookshelfView extends BorderPane {
     private final TextField nameField = new TextField();
     private final TextField roomField = new TextField();
     private final TextField shelfNumberField = new TextField();
-    private final TextArea descriptionField = new TextArea();
 
     // Buttons trigger actions that are assigned by the controller.
     private final Button addButton = new Button("Add");
@@ -64,13 +62,8 @@ public class BookshelfView extends BorderPane {
         shelfNumberColumn.setCellValueFactory(new PropertyValueFactory<>("shelfNumber"));
         shelfNumberColumn.setPrefWidth(120);
 
-        TableColumn<Bookshelf, String> descriptionColumn =
-                new TableColumn<>("Description");
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-        descriptionColumn.setPrefWidth(260);
-
         bookshelfTable.getColumns().addAll(
-                nameColumn, roomColumn, shelfNumberColumn, descriptionColumn);
+                nameColumn, roomColumn, shelfNumberColumn);
         bookshelfTable.setPlaceholder(new Label("No bookshelves have been added yet."));
     }
 
@@ -86,18 +79,12 @@ public class BookshelfView extends BorderPane {
         nameField.setPromptText("Required");
         roomField.setPromptText("Optional");
         shelfNumberField.setPromptText("Optional");
-        descriptionField.setPromptText("Optional");
-        descriptionField.setPrefRowCount(2);
-        descriptionField.setWrapText(true);
-
         fields.add(new Label("Name:"), 0, 0);
         fields.add(nameField, 1, 0);
         fields.add(new Label("Room:"), 2, 0);
         fields.add(roomField, 3, 0);
         fields.add(new Label("Shelf number:"), 0, 1);
         fields.add(shelfNumberField, 1, 1);
-        fields.add(new Label("Description:"), 2, 1);
-        fields.add(descriptionField, 3, 1);
 
         HBox buttons = new HBox(8, addButton, updateButton, deleteButton, clearButton);
         VBox form = new VBox(10, new Label("Bookshelf details"), fields, buttons);
@@ -119,10 +106,6 @@ public class BookshelfView extends BorderPane {
 
     public TextField getShelfNumberField() {
         return shelfNumberField;
-    }
-
-    public TextArea getDescriptionField() {
-        return descriptionField;
     }
 
     public Button getAddButton() {

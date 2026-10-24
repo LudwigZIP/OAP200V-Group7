@@ -13,8 +13,8 @@ public class BookshelfTest {
 
     @Test
     public void unsavedShelvesHaveIdentityEqualityAndStableHashCode() {
-        Bookshelf first = new Bookshelf("A", null, null, null);
-        Bookshelf second = new Bookshelf("B", null, null, null);
+        Bookshelf first = new Bookshelf("A", null, null);
+        Bookshelf second = new Bookshelf("B", null, null);
         Set<Bookshelf> shelves = new HashSet<>();
         shelves.add(first);
 
@@ -25,9 +25,9 @@ public class BookshelfTest {
 
     @Test
     public void persistedShelvesCompareById() {
-        Bookshelf first = new Bookshelf(7, "A", null, null, null);
-        Bookshelf second = new Bookshelf(7, "Renamed", null, null, null);
-        Bookshelf different = new Bookshelf(8, "A", null, null, null);
+        Bookshelf first = new Bookshelf(7, "A", null, null);
+        Bookshelf second = new Bookshelf(7, "Renamed", null, null);
+        Bookshelf different = new Bookshelf(8, "A", null, null);
 
         assertEquals(first, second);
         assertEquals(first.hashCode(), second.hashCode());
@@ -36,12 +36,12 @@ public class BookshelfTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void rejectsBlankName() {
-        new Bookshelf("  ", null, null, null);
+        new Bookshelf("  ", null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void rejectsBlankNameOnUpdate() {
-        Bookshelf shelf = new Bookshelf("A", null, null, null);
+        Bookshelf shelf = new Bookshelf("A", null, null);
         shelf.setName(" ");
     }
 }
