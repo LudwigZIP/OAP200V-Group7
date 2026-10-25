@@ -1,6 +1,7 @@
 
 package com.librarymanager.controller;
 
+import javafx.scene.control.Alert;
 import com.librarymanager.dao.WriterDAO;
 import com.librarymanager.model.Writer;
 import com.librarymanager.view.WriterView;
@@ -84,6 +85,17 @@ public class WriterController {
         // Get the input from the text fields
         String name = view.getNameField().getText();
         String nationality = view.getNationalityField().getText();
+
+        // Check if the input fields are empty
+        if (name.isEmpty() || nationality.isEmpty()) {
+            // Show an error message
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText("Missing information");
+            alert.setContentText("Please enter both name and nationality.");
+            alert.showAndWait();
+            return;
+        }
 
         // Create a new writer object
         Writer writer = new Writer(name, nationality);
