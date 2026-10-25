@@ -27,7 +27,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     @Override
     public Bookshelf create(Bookshelf bookshelf) {
         String sql = "INSERT INTO bookshelf "
-                + "(bookshelfName, bookshelfRoom, BookshelfNumber) "
+                + "(name, room, shelf_number) "
                 + "VALUES (?, ?, ?)";
 
         try (Connection connection = openConnection();
@@ -58,8 +58,8 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public Optional<Bookshelf> findById(int id) {
-        String sql = "SELECT bookshelfId, bookshelfName, bookshelfRoom, BookshelfNumber "
-                + "FROM bookshelf WHERE bookshelfId = ?";
+        String sql = "SELECT bookshelf_id, name, room, shelf_number "
+                + "FROM bookshelf WHERE bookshelf_id = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -83,8 +83,8 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public List<Bookshelf> findAll() {
-        String sql = "SELECT bookshelfId, bookshelfName, bookshelfRoom, BookshelfNumber "
-                + "FROM bookshelf ORDER BY bookshelfName";
+        String sql = "SELECT bookshelf_id, name, room, shelf_number "
+                + "FROM bookshelf ORDER BY name";
         List<Bookshelf> bookshelves = new ArrayList<>();
 
         try (Connection connection = openConnection();
@@ -107,8 +107,8 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public void update(Bookshelf bookshelf) {
-        String sql = "UPDATE bookshelf SET bookshelfName = ?, bookshelfRoom = ?, "
-                + "BookshelfNumber = ? WHERE bookshelfId = ?";
+        String sql = "UPDATE bookshelf SET name = ?, room = ?, "
+                + "shelf_number = ? WHERE bookshelf_id = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -128,7 +128,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      */
     @Override
     public void delete(int id) {
-        String sql = "DELETE FROM bookshelf WHERE bookshelfId = ?";
+        String sql = "DELETE FROM bookshelf WHERE bookshelf_id = ?";
 
         try (Connection connection = openConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -169,13 +169,13 @@ public class BookshelfDAOImpl implements BookshelfDAO {
      * Creates a Bookshelf from the current row in the result set.
      */
     private Bookshelf readBookshelf(ResultSet resultSet) throws SQLException {
-        int shelfNumberValue = resultSet.getInt("BookshelfNumber");
+        int shelfNumberValue = resultSet.getInt("shelf_number");
         Integer shelfNumber = resultSet.wasNull() ? null : shelfNumberValue;
 
         return new Bookshelf(
-                resultSet.getInt("bookshelfId"),
-                resultSet.getString("bookshelfName"),
-                resultSet.getString("bookshelfRoom"),
+                resultSet.getInt("bookshelf_id"),
+                resultSet.getString("name"),
+                resultSet.getString("room"),
                 shelfNumber);
     }
 }

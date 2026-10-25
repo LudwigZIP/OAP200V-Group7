@@ -5,8 +5,8 @@ package com.librarymanager.model;
  * e.g., a shelf in a particular room.
  *
  * <p>Maps directly to the {@code bookshelf} table in the MySQL database
- * ({@code bookshelfId}, {@code bookshelfName}, {@code bookshelfRoom}, and
- * {@code BookshelfNumber}).</p>
+ * ({@code bookshelf_id}, {@code name}, {@code room}, and
+ * {@code shelf_number}).</p>
  *
  * <p>Author: [Thomas Mølnvik] — responsible for domain model design
  * and bookshelf-related persistence logic.</p>
