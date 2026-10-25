@@ -34,12 +34,10 @@ public class MainApp extends Application {
     @Override 
     public void start(Stage primaryStage) {
 
-        appController = new AppController();
-        // Establish DB connection at startup
-        appController.start();
+        MainView mainView = new MainView();
 
-        //Pass controller to MainView
-        MainView mainView = new MainView(appController);
+        appController = new AppController(mainView);
+        appController.start();
 
         Scene scene = new Scene(mainView, 1300, 500);
 

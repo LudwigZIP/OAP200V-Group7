@@ -3,11 +3,16 @@ package com.librarymanager.controller;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.librarymanager.view.MainView;
+
 import com.librarymanager.dao.BookDAO;
 import com.librarymanager.dao.BookshelfDAO;
 import com.librarymanager.dao.BookshelfDAOImpl;
 import com.librarymanager.dao.GenreDAO;
+import com.librarymanager.dao.GenreDAOImpl;
 import com.librarymanager.dao.WriterDAO;
+import com.librarymanager.dao.WriterDAOImpl;
+
 import com.librarymanager.util.AlertUtils;
 import com.librarymanager.util.DatabaseConnection;
 
@@ -16,33 +21,40 @@ import javafx.application.Platform;
 public class AppController {
 
     private Connection conn;
+    private final MainView mainView;
 
     private BookDAO bookDao;
     private BookshelfDAO bookshelfDao;
     private GenreDAO genreDao;
     private WriterDAO writerDao;
 
+    public AppController(MainView mainView) {
+        this.mainView = mainView;
+    }
+
     public void start() {
+
         // Connects to the db
         conn = DatabaseConnection.getConnection();
+
         if (conn != null) {
             // Creates the remaining DAOs when their implementations are available.
-            // bookDao = new BookDAOImpl(conn);
-            // genreDao = new GenreDAOImpl(conn);
-            // writerDao = new WriterDAOImpl(conn);
-        } else {
+            // bookDao = new BookDAOImpl();
+            bookshelfDao = new BookshelfDAOImpl();
+            // genreDao = new GenreDAOImpl();
+            writerDao = new WriterDAOImpl();
+
+            // Connect controllers to their view and DAOs
+            new WriterController(mainView.getWriterView(), writerDao);
+            new BookshelfController(mainView.getBookshelfView(), bookshelfDao);
+
+            // Connect the DB check button
+            mainView.getTestDbButton().setOnAction(e -> handleCheckDb());
+        } 
+        else {
             AlertUtils.showError("Could not connect to the database.");
             Platform.exit();
         }
-    }
-
-    /**
-     * Returns the DAO used by the bookshelf screen.
-     *
-     * @return the bookshelf DAO
-     */
-    public BookshelfDAO getBookshelfDao() {
-        return bookshelfDao;
     }
 
     public void handleCheckDb() {

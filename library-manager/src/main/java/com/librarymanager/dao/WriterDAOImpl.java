@@ -26,7 +26,7 @@ public class WriterDAOImpl implements WriterDAO {
     public Writer create(Writer writer) {
 
         // SQL query to insert a new writer
-        String sql = "INSERT INTO writers (name, nationality) VALUES (?, ?)";
+        String sql = "INSERT INTO writer (name, nationality) VALUES (?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -62,7 +62,7 @@ public class WriterDAOImpl implements WriterDAO {
     public void updateWriter(Writer writer) {
 
         // SQL query to update a writer
-        String sql = "UPDATE writers SET name = ?, nationality = ? WHERE id = ?";
+        String sql = "UPDATE writer SET name = ?, nationality = ? WHERE id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -89,7 +89,7 @@ public class WriterDAOImpl implements WriterDAO {
     public void deleteWriter(Writer writer) {
 
         // SQL query to delete a writer
-        String sql = "DELETE FROM writers WHERE id = ?";
+        String sql = "DELETE FROM writer WHERE id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -117,7 +117,7 @@ public class WriterDAOImpl implements WriterDAO {
         List<Writer> writers = new ArrayList<>();
 
         // SQL query to retrieve all writers
-        String sql = "SELECT id, name, nationality FROM writers";
+        String sql = "SELECT id, name, nationality FROM writer";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
