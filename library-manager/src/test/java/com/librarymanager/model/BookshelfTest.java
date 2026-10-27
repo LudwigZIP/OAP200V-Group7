@@ -9,8 +9,16 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
 
+/**
+ * Test class for the Bookshelf model.
+ *
+ * @author Thomas Mølnvik
+ */
 public class BookshelfTest {
 
+    /**
+     * Tests that unsaved bookshelves are compared by object identity.
+     */
     @Test
     public void unsavedShelvesHaveIdentityEqualityAndStableHashCode() {
         Bookshelf first = new Bookshelf("A", null, null);
@@ -23,6 +31,9 @@ public class BookshelfTest {
         assertTrue(shelves.contains(first));
     }
 
+    /**
+     * Tests that saved bookshelves are compared by ID.
+     */
     @Test
     public void persistedShelvesCompareById() {
         Bookshelf first = new Bookshelf(7, "A", null, null);
@@ -34,11 +45,17 @@ public class BookshelfTest {
         assertFalse(first.equals(different));
     }
 
+    /**
+     * Tests that a bookshelf cannot be created with a blank name.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void rejectsBlankName() {
         new Bookshelf("  ", null, null);
     }
 
+    /**
+     * Tests that a bookshelf cannot be updated with a blank name.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void rejectsBlankNameOnUpdate() {
         Bookshelf shelf = new Bookshelf("A", null, null);

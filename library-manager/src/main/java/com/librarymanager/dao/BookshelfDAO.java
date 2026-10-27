@@ -6,68 +6,55 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Data-access contract for {@link Bookshelf} persistence operations.
+ * Data-access contract for bookshelf persistence operations.
  *
- * <p>Author: [Thomas Mølnvik] — responsible for bookshelf persistence.</p>
+ * @author Thomas Mølnvik
  */
-// This is an interface: it only declares WHAT operations exist, not HOW they work.
-// A separate class (e.g. a JDBC implementation) provides the actual SQL code.
-// This keeps the rest of the application independent of the database details.
-// The four core operations below are known as CRUD (Create, Read, Update, Delete).
 public interface BookshelfDAO {
 
     /**
-     * Persists a new bookshelf.
+     * Creates a new bookshelf in the database.
      *
-     * @param bookshelf the bookshelf to insert (id is ignored/assigned by the DB)
-     * @return the same bookshelf instance with its generated id set
+     * @param bookshelf the bookshelf to create
+     * @return the created bookshelf with its generated ID
      */
-    // CREATE: inserts a row and returns the object with the new id filled in.
     Bookshelf create(Bookshelf bookshelf);
 
     /**
-     * Finds a bookshelf by primary key.
+     * Retrieves a bookshelf by its ID.
      *
-     * @param id the bookshelf id
-     * @return an {@link Optional} containing the bookshelf, or empty if not found
+     * @param id the ID of the bookshelf to retrieve
+     * @return an optional containing the bookshelf, or empty if it is not found
      */
-    // READ (one): returns Optional instead of null, so callers are forced
-    // to handle the "not found" case explicitly.
     Optional<Bookshelf> findById(int id);
 
     /**
-     * Checks whether another bookshelf already uses the given shelf number.
+     * Checks whether another bookshelf uses the given shelf number.
      *
      * @param shelfNumber the shelf number to check
-     * @param excludedBookshelfId an existing bookshelf ID to ignore, or null
+     * @param excludedBookshelfId the bookshelf ID to ignore, or null
      * @return true if another bookshelf uses the shelf number
      */
     boolean isShelfNumberInUse(int shelfNumber, Integer excludedBookshelfId);
 
     /**
-     * Returns all bookshelves, ordered by name.
+     * Retrieves all bookshelves from the database.
      *
-     * @return list of all bookshelves (never null, may be empty)
+     * @return a list of all bookshelves
      */
-    // READ (all): returns an empty list, never null, when there are no shelves.
     List<Bookshelf> findAll();
 
     /**
-     * Updates an existing bookshelf's details.
+     * Updates an existing bookshelf in the database.
      *
-     * @param bookshelf the bookshelf to update, identified by its id
+     * @param bookshelf the bookshelf to update
      */
-    // UPDATE: the id decides which row is changed; the other fields are overwritten.
     void update(Bookshelf bookshelf);
 
     /**
-     * Deletes a bookshelf by id. The database enforces
-     * {@code ON DELETE RESTRICT} on {@code book.bookshelf_id}, so this
-     * will fail if any book still references this bookshelf. Callers
-     * should inform the user to remove or reassign those books first.
+     * Deletes a bookshelf from the database.
      *
-     * @param id the bookshelf id to delete
+     * @param id the ID of the bookshelf to delete
      */
-    // DELETE: fails if books still point to this shelf (foreign key restriction).
     void delete(int id);
 }

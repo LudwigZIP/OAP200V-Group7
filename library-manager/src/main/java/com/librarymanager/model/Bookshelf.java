@@ -1,46 +1,32 @@
 package com.librarymanager.model;
 
 /**
- * Domain entity representing a physical storage location for books,
- * e.g., a shelf in a particular room.
+ * Represents a bookshelf in the Library Manager application.
  *
- * <p>Maps directly to the {@code bookshelf} table in the MySQL database
- * ({@code bookshelf_id}, {@code name}, {@code room}, and
- * {@code shelf_number}).</p>
- *
- * <p>Author: [Thomas Mølnvik] — responsible for domain model design
- * and bookshelf-related persistence logic.</p>
+ * @author Thomas Mølnvik
  */
 public class Bookshelf {
 
-    // ===== Fields =====
-
-    // Primary key. Stays 0 as long as the object has not been saved to the
-    // database (int defaults to 0). The database generates the real value.
+    // Zero indicates that this bookshelf has not yet been saved.
     private int id;
 
-    // Display name of the shelf. Should always have a value.
+    // Required display name of the bookshelf.
     private String name;
 
-    // The room the shelf is located in. May be null (optional).
+    // Optional room where the bookshelf is located.
     private String room;
 
-    // Shelf number. Uses Integer (not int) because it may be null,
-    // whereas a primitive int must always hold a value.
+    // Optional shelf number; Integer allows the value to be null.
     private Integer shelfNumber;
 
-    // ===== Constructors =====
-
     /**
-     * Creates a new, unpersisted Bookshelf.
+     * Constructor for new bookshelves.
+     * Used when adding a bookshelf to the database.
      *
-     * @param name        display name of the shelf, must not be null or blank
-     * @param room        room where the shelf is located, may be null
-     * @param shelfNumber numeric identifier of the shelf, may be null
+     * @param name the name of the bookshelf
+     * @param room the room where the bookshelf is located
+     * @param shelfNumber the number assigned to the bookshelf
      */
-    // Used when creating a NEW shelf that does not yet exist in the database.
-    // No id is passed in, since the database generates it (auto-increment)
-    // when the row is inserted. Until then, id remains 0.
     public Bookshelf(String name, String room, Integer shelfNumber) {
         this.name = requireName(name);
         this.room = room;
@@ -48,17 +34,14 @@ public class Bookshelf {
     }
 
     /**
-     * Reconstructs a Bookshelf that already exists in the database.
+     * Full constructor.
+     * Used when retrieving a bookshelf from the database.
      *
-     * @param id          primary key of the bookshelf row
-     * @param name        display name of the shelf
-     * @param room        room where the shelf is located, may be null
-     * @param shelfNumber numeric identifier of the shelf, may be null
+     * @param id the primary key of the bookshelf
+     * @param name the name of the bookshelf
+     * @param room the room where the bookshelf is located
+     * @param shelfNumber the number assigned to the bookshelf
      */
-    // Used when reading an EXISTING row from the database and building an object from it.
-    // The id is already known, so it is passed in.
-    // This is constructor overloading: two constructors with the same name
-    // but different parameter lists.
     public Bookshelf(int id, String name, String room, Integer shelfNumber) {
         if (id < 0) {
             throw new IllegalArgumentException("Bookshelf id cannot be negative.");
@@ -70,7 +53,7 @@ public class Bookshelf {
     }
 
     /**
-     * Returns the database ID, or 0 while this bookshelf is not persisted.
+     * Returns the bookshelf ID.
      *
      * @return the bookshelf ID
      */
@@ -79,9 +62,9 @@ public class Bookshelf {
     }
 
     /**
-     * Sets the generated database ID after the bookshelf has been inserted.
+     * Sets the bookshelf ID.
      *
-     * @param id the positive database ID
+     * @param id the bookshelf ID
      */
     public void setId(int id) {
         if (id <= 0) {
@@ -91,7 +74,7 @@ public class Bookshelf {
     }
 
     /**
-     * Returns the display name of this bookshelf.
+     * Returns the bookshelf name.
      *
      * @return the bookshelf name
      */
@@ -100,7 +83,7 @@ public class Bookshelf {
     }
 
     /**
-     * Sets the display name, which must not be blank.
+     * Sets the bookshelf name.
      *
      * @param name the new bookshelf name
      */
@@ -109,43 +92,47 @@ public class Bookshelf {
     }
 
     /**
-     * Returns the room where this bookshelf is located.
+     * Returns the bookshelf room.
      *
-     * @return the room, or null when it has not been set
+     * @return the room where the bookshelf is located
      */
     public String getRoom() {
         return room;
     }
 
     /**
-     * Sets the room where this bookshelf is located.
+     * Sets the bookshelf room.
      *
-     * @param room the room, or null when it is not specified
+     * @param room the room where the bookshelf is located
      */
     public void setRoom(String room) {
         this.room = room;
     }
 
     /**
-     * Returns the optional shelf number.
+     * Returns the shelf number.
      *
-     * @return the shelf number, or null when it has not been set
+     * @return the number assigned to the bookshelf
      */
     public Integer getShelfNumber() {
         return shelfNumber;
     }
 
     /**
-     * Sets the optional shelf number.
+     * Sets the shelf number.
      *
-     * @param shelfNumber the shelf number, or null when it is not specified
+     * @param shelfNumber the number assigned to the bookshelf
      */
     public void setShelfNumber(Integer shelfNumber) {
         this.shelfNumber = shelfNumber;
     }
 
     /**
-     * Validates and trims a bookshelf name.
+     * Checks that the bookshelf name is not blank.
+     *
+     * @param name the name to check
+     * @return the name without surrounding whitespace
+     * @throws IllegalArgumentException if the name is blank
      */
     private static String requireName(String name) {
         if (name == null || name.isBlank()) {
@@ -155,9 +142,9 @@ public class Bookshelf {
     }
 
     /**
-     * Returns a readable label for use in text-based controls.
+     * Returns the bookshelf name and room as text.
      *
-     * @return the bookshelf name, optionally followed by its room
+     * @return the bookshelf name and room
      */
     @Override
     public String toString() {
@@ -165,11 +152,10 @@ public class Bookshelf {
     }
 
     /**
-     * Compares persisted bookshelves by database ID. Unsaved instances compare
-     * equal only when they are the same object.
+     * Checks whether this bookshelf is equal to another object.
      *
-     * @param o the object to compare
-     * @return true when both references identify the same bookshelf
+     * @param o the object to compare with this bookshelf
+     * @return true if both objects have the same bookshelf ID
      */
     @Override
     public boolean equals(Object o) {
@@ -184,7 +170,7 @@ public class Bookshelf {
     }
 
     /**
-     * Returns a hash code that remains stable when a new bookshelf receives an ID.
+     * Returns the hash code of this bookshelf.
      *
      * @return the hash code
      */

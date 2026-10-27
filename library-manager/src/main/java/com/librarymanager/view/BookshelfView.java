@@ -36,7 +36,7 @@ public class BookshelfView extends BorderPane {
     private final Button clearButton = new Button("Clear");
 
     /**
-     * Creates the bookshelf view.
+     * Creates the BookshelfView.
      */
     public BookshelfView() {
         setPadding(new Insets(10));
@@ -46,7 +46,7 @@ public class BookshelfView extends BorderPane {
     }
 
     /**
-     * Creates columns for the bookshelf properties shown in the table.
+     * Creates the table for displaying bookshelves.
      */
     private void buildTable() {
         TableColumn<Bookshelf, String> nameColumn = new TableColumn<>("Name");
@@ -68,7 +68,9 @@ public class BookshelfView extends BorderPane {
     }
 
     /**
-     * Creates the input form and places its fields and buttons below the table.
+     * Creates the input fields and buttons for bookshelves.
+     *
+     * @return the bookshelf input form
      */
     private VBox buildForm() {
         GridPane fields = new GridPane();
@@ -92,34 +94,74 @@ public class BookshelfView extends BorderPane {
         return form;
     }
 
+    /**
+     * Returns the bookshelf table.
+     *
+     * @return the bookshelf table
+     */
     public TableView<Bookshelf> getBookshelfTable() {
         return bookshelfTable;
     }
 
+    /**
+     * Returns the name input field.
+     *
+     * @return the name input field
+     */
     public TextField getNameField() {
         return nameField;
     }
 
+    /**
+     * Returns the room input field.
+     *
+     * @return the room input field
+     */
     public TextField getRoomField() {
         return roomField;
     }
 
+    /**
+     * Returns the shelf number input field.
+     *
+     * @return the shelf-number input field
+     */
     public TextField getShelfNumberField() {
         return shelfNumberField;
     }
 
+    /**
+     * Returns the Add button.
+     *
+     * @return the Add button
+     */
     public Button getAddButton() {
         return addButton;
     }
 
+    /**
+     * Returns the Update button.
+     *
+     * @return the Update button
+     */
     public Button getUpdateButton() {
         return updateButton;
     }
 
+    /**
+     * Returns the Delete button.
+     *
+     * @return the Delete button
+     */
     public Button getDeleteButton() {
         return deleteButton;
     }
 
+    /**
+     * Returns the Clear button.
+     *
+     * @return the Clear button
+     */
     public Button getClearButton() {
         return clearButton;
     }
