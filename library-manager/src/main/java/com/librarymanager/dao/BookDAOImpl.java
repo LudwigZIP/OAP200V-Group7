@@ -331,7 +331,7 @@ public class BookDAOImpl implements BookDAO {
         statement.setString(3, book.getReadingStatus());
 
         // The three foreign keys. Book makes sure these objects are never null.
-        statement.setInt(4, book.getWriter().getWriterId());
+        statement.setInt(4, book.getWriter().getId());
         statement.setInt(5, book.getGenre().getId());
         statement.setInt(6, book.getBookshelf().getId());
     }
@@ -380,11 +380,12 @@ public class BookDAOImpl implements BookDAO {
      */
     private Book readBook(ResultSet result) throws SQLException {
 
-        // The writer table stores first and last name separately,
-        // and the Writer class keeps them together as one name.
+        // Reads the writer from the joined writer table.
+        // First and last name are stored separately, as in the database.
         Writer writer = new Writer(
                 result.getInt("writer_id"),
-                result.getString("first_name") + " " + result.getString("last_name"),
+                result.getString("first_name"),
+                result.getString("last_name"),
                 result.getString("nationality"));
 
         Genre genre = new Genre(
@@ -395,8 +396,7 @@ public class BookDAOImpl implements BookDAO {
                 result.getInt("bookshelf_id"),
                 result.getString("shelf_name"),
                 result.getString("room"),
-                getNullableInt(result, "shelf_number"),
-                null);
+                getNullableInt(result, "shelf_number"));
 
         // Creates the Book. Its constructor checks all the values.
         Book book = new Book(
