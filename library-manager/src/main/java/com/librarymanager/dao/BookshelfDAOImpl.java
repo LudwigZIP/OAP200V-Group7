@@ -77,6 +77,35 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
+     * Checks whether another bookshelf already uses the requested shelf number.
+     *
+     * @param shelfNumber the shelf number to check
+     * @param excludedBookshelfId an existing bookshelf ID to ignore, or null
+     * @return true if another bookshelf uses the shelf number
+     */
+    @Override
+    public boolean isShelfNumberInUse(int shelfNumber, Integer excludedBookshelfId) {
+        String sql = "SELECT 1 FROM bookshelf WHERE shelf_number = ?"
+                + (excludedBookshelfId == null ? "" : " AND bookshelf_id <> ?")
+                + " LIMIT 1";
+
+        try (Connection connection = openConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, shelfNumber);
+            if (excludedBookshelfId != null) {
+                statement.setInt(2, excludedBookshelfId);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check shelf number", e);
+        }
+    }
+
+    /**
      * Retrieves every bookshelf, ordered by name.
      *
      * @return all saved bookshelves
