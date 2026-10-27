@@ -68,11 +68,14 @@ public class WriterController {
                     // Check if a writer is selected
                     if (selectedWriter != null) {
 
-                        // Display the writer's name in the name field
-                        view.getNameField().setText(selectedWriter.getWriterName());
+                        // Display the writer´s first name in the fist name field
+                        view.getFirstNameField().setText(selectedWriter.getFirstName());
+
+                        // Display the writer´s last name in the last name field
+                        view.getLastNameField().setText(selectedWriter.getLastName());
 
                         // Display the writer's nationality in the nationality field
-                        view.getNationalityField().setText(selectedWriter.getWriterNationality());
+                        view.getNationalityField().setText(selectedWriter.getNationality());
                     }
                 });
     }
@@ -83,22 +86,23 @@ public class WriterController {
     private void addWriter() {
 
         // Get the input from the text fields
-        String name = view.getNameField().getText();
+        String firstName = view.getFirstNameField().getText();
+        String lastName = view.getLastNameField().getText();
         String nationality = view.getNationalityField().getText();
 
         // Check if the input fields are empty
-        if (name.isEmpty() || nationality.isEmpty()) {
+        if (firstName.isEmpty()  || lastName.isEmpty() ||nationality.isEmpty()) {
             // Show an error message
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Input");
             alert.setHeaderText("Missing information");
-            alert.setContentText("Please enter both name and nationality.");
+            alert.setContentText("Please enter first name, last name and nationality.");
             alert.showAndWait();
             return;
         }
 
         // Create a new writer object
-        Writer writer = new Writer(name, nationality);
+        Writer writer = new Writer(firstName, lastName, nationality);
 
         // Save the writer to the database
         Writer savedWriter = writerDAO.create(writer);
@@ -123,12 +127,14 @@ public class WriterController {
         if (selectedWriter != null) {
 
             // Get the updated input from the text fields
-            String name = view.getNameField().getText();
+            String firstName = view.getFirstNameField().getText();
+            String lastName = view.getLastNameField().getText();
             String nationality = view.getNationalityField().getText();
 
             // Update the writer object
-            selectedWriter.setWriterName(name);
-            selectedWriter.setWriterNationality(nationality);
+            selectedWriter.setFirstName(firstName);
+            selectedWriter.setLastName(lastName);
+            selectedWriter.setNationality(nationality);
 
             // Save the changes to the database
             writerDAO.updateWriter(selectedWriter);
@@ -181,8 +187,9 @@ public class WriterController {
      * Clears the input fields and table selection
      */
     private void clearForm() {
-        // Clear the name field
-        view.getNameField().clear();
+        // Clear the first and last name field
+        view.getFirstNameField().clear();
+        view.getLastNameField().clear();
 
         // Clear the nationality field
         view.getNationalityField().clear();
