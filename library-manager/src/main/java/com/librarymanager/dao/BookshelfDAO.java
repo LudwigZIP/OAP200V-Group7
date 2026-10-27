@@ -36,6 +36,15 @@ public interface BookshelfDAO {
     Optional<Bookshelf> findById(int id);
 
     /**
+     * Checks whether another bookshelf already uses the given shelf number.
+     *
+     * @param shelfNumber the shelf number to check
+     * @param excludedBookshelfId an existing bookshelf ID to ignore, or null
+     * @return true if another bookshelf uses the shelf number
+     */
+    boolean isShelfNumberInUse(int shelfNumber, Integer excludedBookshelfId);
+
+    /**
      * Returns all bookshelves, ordered by name.
      *
      * @return list of all bookshelves (never null, may be empty)

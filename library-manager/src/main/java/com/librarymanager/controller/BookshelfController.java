@@ -59,6 +59,10 @@ public class BookshelfController {
             return;
         }
 
+        if (!confirmShelfNumberIfInUse(bookshelf.getShelfNumber(), null)) {
+            return;
+        }
+
         try {
             bookshelfDAO.create(bookshelf);
             loadBookshelves();
@@ -89,6 +93,11 @@ public class BookshelfController {
                 formValues.getName(),
                 formValues.getRoom(),
                 formValues.getShelfNumber());
+
+        if (!confirmShelfNumberIfInUse(
+                updatedBookshelf.getShelfNumber(), selectedBookshelf.getId())) {
+            return;
+        }
 
         try {
             bookshelfDAO.update(updatedBookshelf);
@@ -181,6 +190,39 @@ public class BookshelfController {
         }
 
         return new Bookshelf(name, view.getRoomField().getText(), shelfNumber);
+    }
+
+    /**
+     * Warns when another bookshelf uses the number and asks whether to continue.
+     */
+    private boolean confirmShelfNumberIfInUse(
+            Integer shelfNumber, Integer excludedBookshelfId) {
+        if (shelfNumber == null) {
+            return true;
+        }
+
+        try {
+            if (!bookshelfDAO.isShelfNumberInUse(shelfNumber, excludedBookshelfId)) {
+                return true;
+            }
+        } catch (RuntimeException e) {
+            showError("Could not check shelf number", e);
+            return false;
+        }
+
+        Alert confirmation = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                "Shelf number " + shelfNumber
+                        + " is already assigned to another bookshelf.\n\n"
+                        + "Do you want to use this shelf number anyway?",
+                ButtonType.YES,
+                ButtonType.NO);
+        confirmation.setHeaderText("Shelf number already in use");
+        confirmation.getDialogPane().lookupButton(ButtonType.NO).requestFocus();
+
+        return confirmation.showAndWait()
+                .filter(response -> response == ButtonType.YES)
+                .isPresent();
     }
 
     /**
