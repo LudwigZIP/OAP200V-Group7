@@ -14,15 +14,17 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * JDBC implementation of the bookshelf data-access contract.
+ * Implements database operations for bookshelves.
+ *
+ * @author Thomas Mølnvik
  */
 public class BookshelfDAOImpl implements BookshelfDAO {
 
     /**
-     * Inserts a bookshelf and assigns the generated database ID to it.
+     * Creates a new bookshelf in the database.
      *
-     * @param bookshelf the bookshelf to save
-     * @return the saved bookshelf
+     * @param bookshelf the bookshelf to create
+     * @return the created bookshelf with its generated ID
      */
     @Override
     public Bookshelf create(Bookshelf bookshelf) {
@@ -51,10 +53,10 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Finds a bookshelf by its primary key.
+     * Retrieves a bookshelf by its ID.
      *
-     * @param id the bookshelf ID
-     * @return the matching bookshelf, or an empty optional when it does not exist
+     * @param id the ID of the bookshelf to retrieve
+     * @return an optional containing the bookshelf, or empty if it is not found
      */
     @Override
     public Optional<Bookshelf> findById(int id) {
@@ -77,10 +79,10 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Checks whether another bookshelf already uses the requested shelf number.
+     * Checks whether another bookshelf uses the given shelf number.
      *
      * @param shelfNumber the shelf number to check
-     * @param excludedBookshelfId an existing bookshelf ID to ignore, or null
+     * @param excludedBookshelfId the bookshelf ID to ignore, or null
      * @return true if another bookshelf uses the shelf number
      */
     @Override
@@ -106,9 +108,9 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Retrieves every bookshelf, ordered by name.
+     * Retrieves all bookshelves from the database.
      *
-     * @return all saved bookshelves
+     * @return a list of all bookshelves
      */
     @Override
     public List<Bookshelf> findAll() {
@@ -130,7 +132,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Updates the stored details for an existing bookshelf.
+     * Updates an existing bookshelf in the database.
      *
      * @param bookshelf the bookshelf to update
      */
@@ -151,7 +153,7 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Deletes a bookshelf by its ID.
+     * Deletes a bookshelf from the database.
      *
      * @param id the ID of the bookshelf to delete
      */
@@ -170,7 +172,10 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Opens a database connection and reports a useful failure if unavailable.
+     * Opens a connection to the database.
+     *
+     * @return the database connection
+     * @throws SQLException if a connection cannot be established
      */
     private Connection openConnection() throws SQLException {
         Connection connection = DatabaseConnection.getConnection();
@@ -181,7 +186,11 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Binds the bookshelf's name, room, and optional number to an SQL statement.
+     * Sets the bookshelf values in a prepared statement.
+     *
+     * @param statement the prepared statement
+     * @param bookshelf the bookshelf to use
+     * @throws SQLException if a database error occurs
      */
     private void setBookshelfValues(PreparedStatement statement, Bookshelf bookshelf)
             throws SQLException {
@@ -195,7 +204,11 @@ public class BookshelfDAOImpl implements BookshelfDAO {
     }
 
     /**
-     * Creates a Bookshelf from the current row in the result set.
+     * Creates a bookshelf object from the current database row.
+     *
+     * @param resultSet the result set containing the bookshelf data
+     * @return the bookshelf created from the row
+     * @throws SQLException if a database error occurs
      */
     private Bookshelf readBookshelf(ResultSet resultSet) throws SQLException {
         int shelfNumberValue = resultSet.getInt("shelf_number");

@@ -13,7 +13,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 /**
- * Connects bookshelf UI actions to bookshelf persistence operations.
+ * Controller class for managing bookshelves in the Library Manager application.
+ *
+ * @author Thomas Mølnvik
  */
 public class BookshelfController {
 
@@ -22,10 +24,10 @@ public class BookshelfController {
     private final ObservableList<Bookshelf> bookshelfList;
 
     /**
-     * Creates the controller and connects the bookshelf table and form.
+     * Creates a controller with access to the view and DAO.
      *
      * @param view the bookshelf view
-     * @param bookshelfDAO the DAO used to manage bookshelf records
+     * @param bookshelfDAO the DAO used to manage bookshelves
      */
     public BookshelfController(BookshelfView view, BookshelfDAO bookshelfDAO) {
         this.view = Objects.requireNonNull(view, "view");
@@ -35,7 +37,7 @@ public class BookshelfController {
     }
 
     /**
-     * Wires up the view and loads the current bookshelf records.
+     * Initializes the controller and connects the bookshelf list to the table.
      */
     private void initialize() {
         view.getBookshelfTable().setItems(bookshelfList);
@@ -51,7 +53,7 @@ public class BookshelfController {
     }
 
     /**
-     * Adds a bookshelf using the values entered in the form.
+     * Adds a new bookshelf using the input fields.
      */
     private void addBookshelf() {
         Bookshelf bookshelf = readForm();
@@ -73,7 +75,7 @@ public class BookshelfController {
     }
 
     /**
-     * Updates the selected bookshelf with the current form values.
+     * Updates the selected bookshelf in the database.
      */
     private void updateBookshelf() {
         Bookshelf selectedBookshelf = view.getBookshelfTable()
@@ -109,7 +111,7 @@ public class BookshelfController {
     }
 
     /**
-     * Deletes the selected bookshelf after confirming with the user.
+     * Deletes the selected bookshelf from the database.
      */
     private void deleteBookshelf() {
         Bookshelf selectedBookshelf = view.getBookshelfTable()
@@ -138,7 +140,7 @@ public class BookshelfController {
     }
 
     /**
-     * Loads all saved bookshelves into the table.
+     * Loads all bookshelves from the database into the table.
      */
     private void loadBookshelves() {
         try {
@@ -150,7 +152,9 @@ public class BookshelfController {
     }
 
     /**
-     * Copies the selected bookshelf into the form.
+     * Displays the selected bookshelf in the input fields.
+     *
+     * @param bookshelf the selected bookshelf, or null when the selection is cleared
      */
     private void populateForm(Bookshelf bookshelf) {
         if (bookshelf == null) {
@@ -165,9 +169,9 @@ public class BookshelfController {
     }
 
     /**
-     * Reads and validates the form values.
+     * Reads and validates the values entered in the form.
      *
-     * @return a new bookshelf, or null after displaying a validation message
+     * @return a new bookshelf, or null if the input is invalid
      */
     private Bookshelf readForm() {
         String name = view.getNameField().getText();
@@ -193,7 +197,12 @@ public class BookshelfController {
     }
 
     /**
-     * Warns when another bookshelf uses the number and asks whether to continue.
+     * Checks whether another bookshelf uses the shelf number and asks whether
+     * the user wants to continue if it is already assigned.
+     *
+     * @param shelfNumber the shelf number to check, or null if none was entered
+     * @param excludedBookshelfId the bookshelf ID to ignore, or null when adding
+     * @return true if the number is available or the user confirms reuse
      */
     private boolean confirmShelfNumberIfInUse(
             Integer shelfNumber, Integer excludedBookshelfId) {
@@ -226,23 +235,37 @@ public class BookshelfController {
     }
 
     /**
-     * Clears the form and removes the current table selection.
+     * Clears the input fields and table selection.
      */
     private void clearForm() {
         view.getBookshelfTable().getSelectionModel().clearSelection();
         clearFields();
     }
 
+    /**
+     * Clears all input fields.
+     */
     private void clearFields() {
         view.getNameField().clear();
         view.getRoomField().clear();
         view.getShelfNumberField().clear();
     }
 
+    /**
+     * Displays an information message.
+     *
+     * @param message the message to display
+     */
     private void showInfo(String message) {
         new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK).showAndWait();
     }
 
+    /**
+     * Displays an error message.
+     *
+     * @param header the error message header
+     * @param exception the exception that caused the error
+     */
     private void showError(String header, Exception exception) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText(header);
