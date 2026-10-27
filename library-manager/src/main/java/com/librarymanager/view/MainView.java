@@ -1,8 +1,5 @@
 package com.librarymanager.view;
 
-import com.librarymanager.controller.AppController;
-import com.librarymanager.controller.BookshelfController;
-
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
@@ -26,11 +23,13 @@ public class MainView extends VBox {
 
 
     private final TabPane tabPane = new TabPane();
-
+    
+    private final BookView bookView = new BookView();
     private final WriterView writerView = new WriterView();
     private final GenreView genreView = new GenreView();
     private final BookshelfView bookshelfView = new BookshelfView();
-    private final BookshelfController bookshelfController;
+
+    private final Button testDbButton = new Button("Check Database Connection");
 
     /**
     * Constructs the main application view.
@@ -39,14 +38,11 @@ public class MainView extends VBox {
     * non-closable tabs, and adds them to the main TabPane.
     */
 
-    public MainView(AppController appController) {
+    public MainView() {
 
-        bookshelfController = new BookshelfController(
-            bookshelfView, appController.getBookshelfDao());
 
-        Button testDbButton = new Button("Check Database Connection");
-
-        testDbButton.setOnAction(e -> appController.handleCheckDb());
+        Tab bookTab = new Tab("Books", bookView);
+        bookTab.setClosable(false);
 
         Tab writerTab = new Tab("Writers", writerView);
         writerTab.setClosable(false);
@@ -58,11 +54,32 @@ public class MainView extends VBox {
         bookshelfTab.setClosable(false);
 
         tabPane.getTabs().addAll(
+            bookTab,
             writerTab,
             genreTab,
             bookshelfTab
         );
 
         getChildren().addAll(testDbButton, tabPane);
+    }
+
+    public Button getTestDbButton() {
+        return testDbButton;
+    }
+
+    public BookView getBookView() {
+        return bookView;
+    }
+
+    public WriterView getWriterView() {
+        return writerView;
+    }
+
+    public GenreView getGenreView() {
+        return genreView;
+    }
+
+    public BookshelfView getBookshelfView() {
+        return bookshelfView;
     }
 }

@@ -21,7 +21,8 @@ public class WriterView extends BorderPane {
     private final TableView<Writer> table = new TableView<>();
 
     // Input fields for receiving name and nationality for the Writer
-    private final TextField nameField = new TextField();
+    private final TextField firstNameField = new TextField();
+    private final TextField lastNameField = new TextField();
     private final TextField nationalityField = new TextField();
 
     // Buttons for writer operations
@@ -42,20 +43,22 @@ public class WriterView extends BorderPane {
      * Creates the table for displaying writers.
      */
     private void buildTable() {
-        TableColumn<Writer, String> nameColumn = new TableColumn<>("Name");
+        TableColumn<Writer, String> firstNameColumn = new TableColumn<>("First Name");
 
-        nameColumn.setCellValueFactory(
-            new PropertyValueFactory<>("writerName")
-        );
+        firstNameColumn.setCellValueFactory(
+                new PropertyValueFactory<>("firstName"));
 
-        TableColumn<Writer, String> nationalityColumn =
-            new TableColumn<>("Nationality");
+        TableColumn<Writer, String> lastNameColumn = new TableColumn<>("Last Name");
+
+        lastNameColumn.setCellValueFactory(
+                new PropertyValueFactory<>("lastName"));
+
+        TableColumn<Writer, String> nationalityColumn = new TableColumn<>("Nationality");
 
         nationalityColumn.setCellValueFactory(
-            new PropertyValueFactory<>("writerNationality")
-        );
+                new PropertyValueFactory<>("writerNationality"));
 
-        table.getColumns().addAll(nameColumn, nationalityColumn);
+        table.getColumns().addAll(firstNameColumn, lastNameColumn, nationalityColumn);
     }
 
     /**
@@ -64,7 +67,8 @@ public class WriterView extends BorderPane {
     private void buildForm() {
 
         // Labels for the input fields
-        Label nameLabel = new Label("Name");
+        Label firstNameLabel = new Label("First Name");
+        Label lastNameLabel = new Label("Last Name");
         Label nationalityLabel = new Label("Nationality");
 
         // Places the buttons next to each other
@@ -72,12 +76,13 @@ public class WriterView extends BorderPane {
 
         // Places fields and buttons vertically
         VBox form = new VBox(10,
-            nameLabel,
-            nameField,
-            nationalityLabel,
-            nationalityField,
-            buttons
-        );
+                firstNameLabel,
+                firstNameField,
+                lastNameLabel,
+                lastNameField,
+                nationalityLabel,
+                nationalityField,
+                buttons);
 
         form.setPadding(new Insets(15));
 
@@ -86,56 +91,65 @@ public class WriterView extends BorderPane {
     }
 
     /**
- * Returns the Add button.
- *
- * @return the Add button
- */
+     * Returns the Add button.
+     *
+     * @return the Add button
+     */
     public Button getAddButton() {
-    return addButton;
-}
+        return addButton;
+    }
 
-/**
- * Returns the Update button.
- *
- * @return the Update button
- */
+    /**
+     * Returns the Update button.
+     *
+     * @return the Update button
+     */
     public Button getUpdateButton() {
-    return updateButton;
-}
+        return updateButton;
+    }
 
-/**
- * Returns the Delete button.
- *
- * @return the Delete button
- */
+    /**
+     * Returns the Delete button.
+     *
+     * @return the Delete button
+     */
     public Button getDeleteButton() {
-    return deleteButton;
-}
+        return deleteButton;
+    }
 
-/**
- * Returns the writer table.
- *
- * @return the writer table
- */
+    /**
+     * Returns the writer table.
+     *
+     * @return the writer table
+     */
     public TableView<Writer> getWriterTable() {
-    return table;
-}
+        return table;
+    }
 
-/**
- * Returns the name input field.
- *
- * @return the name field
- */
-    public TextField getNameField() {
-    return nameField;
-}
+    /**
+     * Returns the first name input field.
+     *
+     * @return the first name field
+     */
+    public TextField getFirstNameField() {
+        return firstNameField;
+    }
+    /**
+     * Returns the last name input field.
+     *
+     * @return the last name field
+     */
+     public TextField getLastNameField() {
+        return lastNameField;
+    }
 
-/**
- * Returns the nationality input field.
- *
- * @return the nationality field
- */
+
+    /**
+     * Returns the nationality input field.
+     *
+     * @return the nationality field
+     */
     public TextField getNationalityField() {
-    return nationalityField;
-}
+        return nationalityField;
+    }
 }

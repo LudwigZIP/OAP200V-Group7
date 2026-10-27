@@ -15,9 +15,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
- * View class for displaying and entering bookshelf information.
- *
- * @author Thomas Mølnvik
+ * View for displaying and editing bookshelves.
+ * @author Thomas Molnvik
+ * <p>The controller connects the buttons and table selection to application
+ * actions; this class is responsible for constructing the interface.</p>
  */
 public class BookshelfView extends BorderPane {
 
