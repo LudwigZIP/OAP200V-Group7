@@ -87,7 +87,7 @@ public interface BookDAO {
 
     /**
      * Updates an existing book in the database: title, year, reading
-     * status, rating, notes, writer, genre and bookshelf.
+     * status, writer, genre and bookshelf.
      *
      * @param book the book to update (it must have been saved before)
      */
