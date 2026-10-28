@@ -134,7 +134,7 @@ public class GenreView extends BorderPane {
 
     // Give the controller access to the table to display and select genres.
     // @return the TableView that displays genres
-    public TableView<Genre> getTable() {
+    public TableView<Genre> getGenreTable() {
         return table;
     }
 
