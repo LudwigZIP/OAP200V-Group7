@@ -13,6 +13,8 @@ import java.util.List;
 
 /**
  * Implements database operations for writers.
+ * 
+ * @author Mia Bro Auganes
  */
 public class WriterDAOImpl implements WriterDAO {
 
@@ -29,8 +31,8 @@ public class WriterDAOImpl implements WriterDAO {
         String sql = "INSERT INTO writer (first_name, last_name, nationality) VALUES (?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(
+                        sql, Statement.RETURN_GENERATED_KEYS)) {
 
             // Set the values for the SQL query
             statement.setString(1, writer.getFirstName());
@@ -66,7 +68,7 @@ public class WriterDAOImpl implements WriterDAO {
         String sql = "UPDATE writer SET first_name = ?, last_name = ?, nationality = ? WHERE id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             // Set the updated values
             statement.setString(1, writer.getFirstName());
@@ -94,7 +96,7 @@ public class WriterDAOImpl implements WriterDAO {
         String sql = "DELETE FROM writer WHERE id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             // Set the ID of the writer to delete
             statement.setInt(1, writer.getId());
@@ -122,8 +124,8 @@ public class WriterDAOImpl implements WriterDAO {
         String sql = "SELECT id, first_name, last_name, nationality FROM writer";
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
 
             // Go through each row in the result
             while (resultSet.next()) {
@@ -146,5 +148,37 @@ public class WriterDAOImpl implements WriterDAO {
         }
 
         return writers;
+    }
+
+    /**
+     * Checks if a writer with the same name already exists.
+     */
+    @Override
+    public boolean existsWriter(String firstName, String lastName, Integer excludedId) {
+
+        // SQL query to check if a writer already exists
+        String sql = "SELECT 1 FROM writer WHERE first_name = ? AND last_name = ?"
+                + (excludedId == null ? "" : " AND id <> ?")
+                + " LIMIT 1";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            // Set the first and last name
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+
+            // Exclude the selected writer when updating
+            if (excludedId != null) {
+                statement.setInt(3, excludedId);
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check if writer exists", e);
+        }
     }
 }

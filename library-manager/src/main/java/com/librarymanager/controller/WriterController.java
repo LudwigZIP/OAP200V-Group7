@@ -2,6 +2,7 @@
 package com.librarymanager.controller;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import com.librarymanager.dao.WriterDAO;
 import com.librarymanager.model.Writer;
 import com.librarymanager.view.WriterView;
@@ -14,6 +15,7 @@ import javafx.collections.ObservableList;
 /**
  * Controller class for managing writers in the Library Manager application
  * 
+ * @author Mia Bro Auganes
  */
 public class WriterController {
     // DAO used to access writer data
@@ -91,7 +93,7 @@ public class WriterController {
         String nationality = view.getNationalityField().getText();
 
         // Check if the input fields are empty
-        if (firstName.isEmpty()  || lastName.isEmpty() ||nationality.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty() || nationality.isBlank()) {
             // Show an error message
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Input");
@@ -101,6 +103,10 @@ public class WriterController {
             return;
         }
 
+        // Check if a writer with the same name already exists
+        if (!confirmWriterIfExists(firstName, lastName, null)) {
+            return;
+        }
         // Create a new writer object
         Writer writer = new Writer(firstName, lastName, nationality);
 
@@ -112,6 +118,36 @@ public class WriterController {
 
         // Clear the input fields
         clearForm();
+    }
+
+    /**
+     * Checks if a writer with the same name already exists
+     * and asks the user whether to continue.
+     *
+     * @return true if the writer does not exist or the user confirms
+     */
+    private boolean confirmWriterIfExists(String firstName, String lastName, Integer excludedId) {
+
+        // Check if the writer already exists
+        if (!writerDAO.existsWriter(firstName, lastName, excludedId)) {
+            return true;
+        }
+
+        // Show a confirmation dialog
+        Alert confirmation = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                "A writer named " + firstName + " " + lastName
+                        + " already exists in the database.\n\n"
+                        + "Do you want to continue anyway?",
+                ButtonType.YES,
+                ButtonType.NO);
+
+        confirmation.setHeaderText("Writer already exists");
+
+        // Return true only if the user selects Yes
+        return confirmation.showAndWait()
+                .filter(response -> response == ButtonType.YES)
+                .isPresent();
     }
 
     /**
@@ -131,6 +167,10 @@ public class WriterController {
             String lastName = view.getLastNameField().getText();
             String nationality = view.getNationalityField().getText();
 
+            // Check if another writer with the same name already exists
+            if (!confirmWriterIfExists(firstName, lastName, selectedWriter.getId())) {
+                return;
+            }
             // Update the writer object
             selectedWriter.setFirstName(firstName);
             selectedWriter.setLastName(lastName);

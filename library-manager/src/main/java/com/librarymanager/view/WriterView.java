@@ -15,6 +15,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 
+/**
+ * View class for displaying and managing writers
+ * in the Library Manager application.
+ *
+ * @author Mia Bro Auganes
+ */
 public class WriterView extends BorderPane {
 
     // Table to show writer objects
@@ -56,9 +62,11 @@ public class WriterView extends BorderPane {
         TableColumn<Writer, String> nationalityColumn = new TableColumn<>("Nationality");
 
         nationalityColumn.setCellValueFactory(
-                new PropertyValueFactory<>("writerNationality"));
+                new PropertyValueFactory<>("nationality"));
 
-        table.getColumns().addAll(firstNameColumn, lastNameColumn, nationalityColumn);
+        table.getColumns().add(firstNameColumn);
+        table.getColumns().add(lastNameColumn);
+        table.getColumns().add(nationalityColumn);
     }
 
     /**
@@ -134,15 +142,15 @@ public class WriterView extends BorderPane {
     public TextField getFirstNameField() {
         return firstNameField;
     }
+
     /**
      * Returns the last name input field.
      *
      * @return the last name field
      */
-     public TextField getLastNameField() {
+    public TextField getLastNameField() {
         return lastNameField;
     }
-
 
     /**
      * Returns the nationality input field.
