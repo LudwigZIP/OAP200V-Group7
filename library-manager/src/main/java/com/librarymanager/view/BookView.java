@@ -101,7 +101,7 @@ public class BookView extends BorderPane {
 
         // Uses the reading statuses supported by the Book model.
         statusField.getItems().addAll(
-                "unread", "currently reading", "read");
+                "Unread", "Reading", "Read");
         statusField.setValue("unread");
 
         // Places the buttons next to each other.

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import com.librarymanager.view.MainView;
 
 import com.librarymanager.dao.BookDAO;
+import com.librarymanager.dao.BookDAOImpl;
 import com.librarymanager.dao.BookshelfDAO;
 import com.librarymanager.dao.BookshelfDAOImpl;
 import com.librarymanager.dao.GenreDAO;
@@ -39,14 +40,25 @@ public class AppController {
 
         if (conn != null) {
             // Creates the remaining DAOs when their implementations are available.
-            // bookDao = new BookDAOImpl();
+            bookDao = new BookDAOImpl();
             bookshelfDao = new BookshelfDAOImpl();
-            // genreDao = new GenreDAOImpl();
+            genreDao = new GenreDAOImpl();
             writerDao = new WriterDAOImpl();
 
             // Connect controllers to their view and DAOs
             new WriterController(mainView.getWriterView(), writerDao);
             new BookshelfController(mainView.getBookshelfView(), bookshelfDao);
+            new GenreController(mainView.getGenreView(), genreDao);
+            
+            // Load writers, genres and bookshelves into book view
+            mainView.getBookView().setReferenceData(
+                writerDao.findAll(),
+                genreDao.findAll(),
+                bookshelfDao.findAll()
+            );
+
+            // Connect the book controller to view and DAO
+            new BookController(mainView.getBookView(), bookDao);
 
             // Connect the DB check button
             mainView.getTestDbButton().setOnAction(e -> handleCheckDb());

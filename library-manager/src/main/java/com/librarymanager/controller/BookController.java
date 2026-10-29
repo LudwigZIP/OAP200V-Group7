@@ -124,10 +124,10 @@ public class BookController {
     public void loadBooks() {
 
         // Retrieves the complete book list from the DAO.
-        // List<Book> books = bookDAO.findAll();
+        List<Book> books = bookDAO.findAll();
 
         // Replaces the contents of the observable list.
-        // bookList.setAll(books);
+        bookList.setAll(books);
     }
 
     /**
@@ -157,7 +157,7 @@ public class BookController {
                     view.getBookshelfField().getValue());
 
             // Saves the changes to the database.
-            // bookDAO.update(selectedBook);
+            bookDAO.update(selectedBook);
 
             // Reloads the books in the table.
             loadBooks();
@@ -180,7 +180,7 @@ public class BookController {
         if (selectedBook != null) {
 
             // Deletes the database record using the book's ID.
-            // bookDAO.delete(selectedBook.getId());
+            bookDAO.delete(selectedBook.getId());
 
             // Reloads the remaining books.
             loadBooks();
