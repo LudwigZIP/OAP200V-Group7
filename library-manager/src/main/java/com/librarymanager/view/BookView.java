@@ -17,12 +17,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 /**
- * Displays the book table and form for adding, updating and deleting books.
+ * Displays the book table, title search and book input form.
  *
- * @author Ulrik Marker 
+ * @author Ulrik Marker
  */
 public class BookView extends BorderPane {
 
@@ -42,13 +43,24 @@ public class BookView extends BorderPane {
     private final Button updateButton = new Button("Update");
     private final Button deleteButton = new Button("Delete");
 
+    // Controls used to search for books by title.
+    private final TextField searchField = new TextField();
+    private final Button searchButton = new Button("Search");
+
     /**
-     * Creates the book view.
+     * Creates the table, search bar and input form.
      */
     public BookView() {
         buildTable();
         buildForm();
-        setCenter(table);
+
+        // Groups the search bar and table on the left.
+        BorderPane bookListPane = new BorderPane();
+        bookListPane.setTop(buildSearchBar());
+        bookListPane.setCenter(table);
+
+        // Lets the table area fill the space beside the form.
+        setCenter(bookListPane);
     }
 
     /**
@@ -57,26 +69,29 @@ public class BookView extends BorderPane {
     private void buildTable() {
 
         // "title" tells JavaFX to use Book.getTitle().
-        TableColumn<Book, String> titleColumn = new TableColumn<>("Title");
+        TableColumn<Book, String> titleColumn =
+                new TableColumn<>("Title");
         titleColumn.setCellValueFactory(
                 new PropertyValueFactory<>("title"));
 
-        // Uses Book.getPublicationYear().
-        TableColumn<Book, Integer> yearColumn = new TableColumn<>("Year");
+        TableColumn<Book, Integer> yearColumn =
+                new TableColumn<>("Year");
         yearColumn.setCellValueFactory(
                 new PropertyValueFactory<>("publicationYear"));
 
-        // Uses Book.getReadingStatus().
-        TableColumn<Book, String> statusColumn = new TableColumn<>("Status");
+        TableColumn<Book, String> statusColumn =
+                new TableColumn<>("Status");
         statusColumn.setCellValueFactory(
                 new PropertyValueFactory<>("readingStatus"));
 
         // Related objects are displayed using their toString() methods.
-        TableColumn<Book, Writer> writerColumn = new TableColumn<>("Writer");
+        TableColumn<Book, Writer> writerColumn =
+                new TableColumn<>("Writer");
         writerColumn.setCellValueFactory(
                 new PropertyValueFactory<>("writer"));
 
-        TableColumn<Book, Genre> genreColumn = new TableColumn<>("Genre");
+        TableColumn<Book, Genre> genreColumn =
+                new TableColumn<>("Genre");
         genreColumn.setCellValueFactory(
                 new PropertyValueFactory<>("genre"));
 
@@ -85,6 +100,14 @@ public class BookView extends BorderPane {
         bookshelfColumn.setCellValueFactory(
                 new PropertyValueFactory<>("bookshelf"));
 
+        // Sets initial column widths.
+        titleColumn.setPrefWidth(230);
+        yearColumn.setPrefWidth(60);
+        statusColumn.setPrefWidth(80);
+        writerColumn.setPrefWidth(150);
+        genreColumn.setPrefWidth(150);
+        bookshelfColumn.setPrefWidth(220);
+
         // Adds the columns in display order.
         table.getColumns().add(titleColumn);
         table.getColumns().add(yearColumn);
@@ -92,22 +115,42 @@ public class BookView extends BorderPane {
         table.getColumns().add(writerColumn);
         table.getColumns().add(genreColumn);
         table.getColumns().add(bookshelfColumn);
+
+        // Displays a message when the list is empty.
+        table.setPlaceholder(new Label("No books to display."));
     }
 
     /**
-     * Creates the input fields and action buttons.
+     * Creates the title search controls.
+     *
+     * @return the search bar
+     */
+    private HBox buildSearchBar() {
+        searchField.setPromptText("Search by book title...");
+
+        HBox searchBar = new HBox(
+                10, searchField, searchButton);
+        searchBar.setPadding(new Insets(10));
+
+        // Lets the search field fill the available horizontal space.
+        HBox.setHgrow(searchField, Priority.ALWAYS);
+
+        return searchBar;
+    }
+
+    /**
+     * Creates the input form on the right side of the table.
      */
     private void buildForm() {
 
-        // Uses the reading statuses supported by the Book model.
+        // Uses the reading statuses agreed for the book data.
         statusField.getItems().addAll(
                 "Unread", "Reading", "Read");
-        statusField.setValue("unread");
+        statusField.setValue("Unread");
 
-        // Places the buttons next to each other.
-        HBox buttons = new HBox(10, addButton, updateButton, deleteButton);
+        HBox buttons = new HBox(
+                10, addButton, updateButton, deleteButton);
 
-        // Places the labels, input fields and buttons vertically.
         VBox form = new VBox(8,
                 new Label("Title"), titleField,
                 new Label("Publication year"), yearField,
@@ -118,7 +161,14 @@ public class BookView extends BorderPane {
                 buttons);
 
         form.setPadding(new Insets(15));
-        setBottom(form);
+
+        // Keeps the form at a fixed width beside the table.
+        form.setPrefWidth(300);
+        form.setMinWidth(300);
+        form.setMaxWidth(300);
+
+        // Places the form to the right instead of below the table.
+        setRight(form);
     }
 
     /**
@@ -186,5 +236,15 @@ public class BookView extends BorderPane {
     /** @return the Delete button */
     public Button getDeleteButton() {
         return deleteButton;
+    }
+
+    /** @return the title search field */
+    public TextField getSearchField() {
+        return searchField;
+    }
+
+    /** @return the Search button */
+    public Button getSearchButton() {
+        return searchButton;
     }
 }
