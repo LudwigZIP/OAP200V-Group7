@@ -9,6 +9,7 @@ import com.librarymanager.view.GenreView;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Alert;
 /**
  * Controller class responsible for managing genre-related interactions
@@ -49,6 +50,9 @@ public class GenreController {
     // This list supplies the genre data displayed in the table.
     private final ObservableList<Genre> genreList;
 
+    // This filtered list allows the user to search and filter genres in the table.
+    private final FilteredList<Genre> filteredGenres;
+
     /**
      * Creates a controller with access to the genre view and DAO.
      *
@@ -62,6 +66,10 @@ public class GenreController {
         this.genreDAO = Objects.requireNonNull(genreDAO, "genreDAO");
         // Create an observable list to hold the genres displayed in the table.
         this.genreList = FXCollections.observableArrayList();
+        // Create a filtered list that wraps the observable list, allowing for search and filtering.
+        this.filteredGenres = new FilteredList<>(
+                genreList,
+                genre -> true);
 
         // Connect the view components to the controller.
         initialize();
@@ -73,7 +81,8 @@ public class GenreController {
      */
     private void initialize() {
         // Display the genre list in the table.
-        view.getGenreTable().setItems(genreList);
+        // The table's items are set to the filtered list, which allows for dynamic filtering based on user input.
+        view.getGenreTable().setItems(filteredGenres);
 
         // Connect each button to the method that handles its action.
         // The controller handles the logic when the user clicks a button.
@@ -83,6 +92,23 @@ public class GenreController {
         view.getUpdateButton().setOnAction(event -> updateGenre());
         // The delete button is connected to the deleteGenre method.
         view.getDeleteButton().setOnAction(event -> deleteGenre());
+
+        // Connect the search field to a listener that filters the table as the user types.
+        // The search field's text property is observed for changes.
+        // Filter genres whenever the user types in the search field.
+        view.getSearchField().textProperty().addListener(
+                (observable, oldText, newText) -> {
+
+                    String searchText = newText == null
+                            ? ""
+                            : newText.trim().toLowerCase();
+
+                    filteredGenres.setPredicate(genre ->
+                            searchText.isEmpty()
+                            || genre.getName()
+                                    .toLowerCase()
+                                    .contains(searchText));
+                });
 
         // Display the selected genre in the input field.
         // When the user selects a row in the table, the populateForm method is called.

@@ -74,6 +74,9 @@ public class GenreView extends BorderPane {
     // The text field where the user types a genre name.
     private final TextField nameField = new TextField();
 
+    // The text field where the user can type a search query to filter genres.
+    private final TextField searchField = new TextField();
+
     // These buttons let the user request genre actions.
     // The controller will decide what happens when each button is clicked.
     // addButton is used to add a new genre to the database.
@@ -115,6 +118,13 @@ public class GenreView extends BorderPane {
         VBox formBox = new VBox(10);
         formBox.setPadding(new Insets(10));
 
+        // HBox places the search label and text field next to each other.
+        // The spacing of 10 pixels is the space between the label and the text field.
+        HBox searchBox = new HBox(10);
+        searchField.setPromptText("Search genre...");
+        searchBox.getChildren().addAll(
+                new Label("Search:"), searchField);
+
         // HBox places the label and text field next to each other.
         // The spacing of 10 pixels is the space between the label and the text field.
         HBox nameBox = new HBox(10);
@@ -128,7 +138,7 @@ public class GenreView extends BorderPane {
 
         // Put the name row and button row in the form, then place it below the table.
         // The formBox is placed in the bottom area of the BorderPane, which is below the table.
-        formBox.getChildren().addAll(nameBox, buttonBox);
+        formBox.getChildren().addAll(searchBox, nameBox, buttonBox);
         setBottom(formBox);
     }
 
@@ -142,6 +152,12 @@ public class GenreView extends BorderPane {
     // @return the TextField for entering the genre name
     public TextField getNameField() {
         return nameField;
+    }
+
+    // Give the controller access to the search field to filter genres.
+    // @return the TextField for entering search queries
+    public TextField getSearchField() {
+        return searchField;
     }
 
     // Give the controller access to the Add button to handle clicks.
