@@ -38,12 +38,22 @@ public class Genre {
     private int id;
     //This is the name of the genre, such as "Science Fiction", "Romance", or "Mystery".
     private String name;
+    //This is the description of the genre, providing additional information about the genre.
+    private String description;
 
     //Constructor used when creating a new genre that does not yet have an ID assigned by the database.
     //This constructor is useful when you want to create a new genre and save it to the database, where the ID will be generated automatically.
     //@param name the name of the genre
     public Genre(String name) {
         this.name = name;
+    }
+    //Constructor used when creating a new genre with both a name and a description, but without an ID.
+    //This constructor is useful when you want to create a new genre with additional information before saving it to the database, where the ID will be generated automatically.
+    //@param name the name of the genre
+    //@param description the description of the genre
+    public Genre(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
     //Constructor used when reading a genre from the database, where the ID is already known.
     //@param id the unique ID of the genre
@@ -52,6 +62,16 @@ public class Genre {
         this.id = id;
         this.name = name;
     }
+    //Constructor used when reading a genre from the database, where both the ID and description are already known.
+    //@param id the unique ID of the genre
+    //@param name the name of the genre
+    //@param description the description of the genre
+    public Genre(int id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
     // Getters and setters
 
     // Returns the unique ID of the genre
@@ -76,6 +96,16 @@ public class Genre {
     //@param name the new name to set for the genre
     public void setName(String name) {
         this.name = name;
+    }
+    // Returns the description of the genre
+    // @return the description of the genre
+    public String getDescription() {
+        return description;
+    }
+    // Sets the description of the genre
+    //@param description the new description to set for the genre
+    public void setDescription(String description) {
+        this.description = description;
     }
     //Returns a string representation of the genre, which is its name.
     //This method tells Java how the object should be represented as a string.

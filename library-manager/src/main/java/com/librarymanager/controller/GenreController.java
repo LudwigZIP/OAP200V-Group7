@@ -127,6 +127,8 @@ public class GenreController {
     private void addGenre() {
         // Read the name entered by the user.
         String name = view.getNameField().getText();
+        // Read the description entered by the user.
+        String description = view.getDescriptionField().getText();
 
         // Do not save an empty genre name.
         if (name == null || name.isBlank()) {
@@ -136,7 +138,7 @@ public class GenreController {
 
         try {
             // Create and save the new genre through the DAO.
-            genreDAO.create(new Genre(name.trim()));
+            genreDAO.create(new Genre(name.trim(), description.trim()));
 
             // Refresh the table and clear the form.
             // After adding a new genre, reload the list of genres from the database.
@@ -170,6 +172,7 @@ public class GenreController {
 
         // Read the updated name from the input field.
         String name = view.getNameField().getText();
+        String description = view.getDescriptionField().getText();
 
         // Do not allow the name to be empty.
         if (name == null || name.isBlank()) {
@@ -181,6 +184,7 @@ public class GenreController {
             // Update the selected object and save it in the database.
             // The selectedGenre object is modified with the new name.
             selectedGenre.setName(name.trim());
+            selectedGenre.setDescription(description.trim());
             genreDAO.update(selectedGenre);
 
             // Refresh the table and clear the form.
@@ -268,6 +272,11 @@ public class GenreController {
 
         // Show the selected genre's name in the input field.
         view.getNameField().setText(genre.getName());
+        // Show the selected genre's description in the text area.
+        view.getDescriptionField().setText(genre.getDescription());
+        // If the description is null, set the text area to an empty string to avoid displaying "null".
+        // This ensures that the user sees a blank field instead of the word "null" when there is no description.
+        view.getDescriptionField().setText(genre.getDescription() == null ? "" : genre.getDescription());
     }
 
     /**
@@ -293,6 +302,7 @@ public class GenreController {
         // Remove the text currently entered in the genre field.
         // The getNameField().clear() method is called to clear the text from the input field.
         view.getNameField().clear();
+        view.getDescriptionField().clear();
     }
 
     /**

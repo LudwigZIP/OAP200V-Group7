@@ -16,6 +16,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.control.TextArea;
+
 
 /**
  * JavaFX view responsible for displaying and managing the user interface
@@ -78,6 +80,8 @@ public class GenreView extends BorderPane {
 
     // The text field where the user can type a search query to filter genres.
     private final TextField searchField = new TextField();
+    // The text area where the user can type a description for the genre.
+    private final TextArea descriptionField = new TextArea();
 
     // These buttons let the user request genre actions.
     // The controller will decide what happens when each button is clicked.
@@ -107,8 +111,14 @@ public class GenreView extends BorderPane {
         TableColumn<Genre, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        // Add both columns to the table so they appear on screen.
-        table.getColumns().addAll(idColumn, nameColumn);
+        // Displays each genre's description by calling getDescription() on its Genre object.
+        // The PropertyValueFactory uses the property name "description" to find the getDescription()
+        TableColumn<Genre, String> descriptionColumn =
+            new TableColumn<>("Description");
+        descriptionColumn.setCellValueFactory(
+            new PropertyValueFactory<>("description"));
+            // Add the columns to the table so they are displayed in the UI.
+        table.getColumns().addAll(idColumn, nameColumn, descriptionColumn);
     }
 
     // Arrange the name field and action buttons below the table.
@@ -149,8 +159,18 @@ public class GenreView extends BorderPane {
         HBox buttonBox = new HBox(10);
         buttonBox.getChildren().addAll(addButton, updateButton, deleteButton);
 
+        // Set up the description field with a label and configure its properties.
+        descriptionField.setPromptText("Enter genre description...");
+        descriptionField.setPrefRowCount(4);
+
+        // VBox places the label and text area vertically, one on top of the other.
+        // The VBox is used to group the label and text area together.
+        // The spacing of 5 pixels is the space between the label and the text area.
+        VBox descriptionBox = new VBox(5);
+        descriptionBox.getChildren().addAll(new Label("Description:"), descriptionField);
+
         // Put the name row and button row in the form
-        formBox.getChildren().addAll(nameBox, buttonBox);
+        formBox.getChildren().addAll(nameBox, descriptionBox, buttonBox);
 
         // Allow the form to scroll if necessary
         ScrollPane scrollPane = new ScrollPane(formBox);
@@ -159,6 +179,8 @@ public class GenreView extends BorderPane {
         
         // Place the form on the right side of the table
         setRight(scrollPane);
+
+       
     }
 
     // Give the controller access to the table to display and select genres.
@@ -195,5 +217,9 @@ public class GenreView extends BorderPane {
     // @return the Button for deleting a genre
     public Button getDeleteButton() {
         return deleteButton;
+    }
+
+    public TextArea getDescriptionField() {
+        return descriptionField;
     }
 }
