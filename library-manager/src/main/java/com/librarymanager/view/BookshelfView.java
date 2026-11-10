@@ -9,8 +9,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -41,8 +41,8 @@ public class BookshelfView extends BorderPane {
     public BookshelfView() {
         setPadding(new Insets(10));
         buildTable();
+        buildForm();
         setCenter(bookshelfTable);
-        setBottom(buildForm());
     }
 
     /**
@@ -69,29 +69,33 @@ public class BookshelfView extends BorderPane {
 
     /**
      * Creates the input fields and buttons for bookshelves.
-     *
-     * @return the bookshelf input form
      */
-    private VBox buildForm() {
-        GridPane fields = new GridPane();
-        fields.setHgap(10);
-        fields.setVgap(8);
-        fields.setPadding(new Insets(12, 0, 0, 0));
+    private void buildForm() {
 
+        // Sets placeholder text for input fields
         nameField.setPromptText("Required");
         roomField.setPromptText("Optional");
         shelfNumberField.setPromptText("Optional");
-        fields.add(new Label("Name:"), 0, 0);
-        fields.add(nameField, 1, 0);
-        fields.add(new Label("Room:"), 2, 0);
-        fields.add(roomField, 3, 0);
-        fields.add(new Label("Shelf number:"), 0, 1);
-        fields.add(shelfNumberField, 1, 1);
 
+        // Places buttons next to one another
         HBox buttons = new HBox(8, addButton, updateButton, deleteButton, clearButton);
-        VBox form = new VBox(10, new Label("Bookshelf details"), fields, buttons);
-        form.setPadding(new Insets(10, 0, 0, 0));
-        return form;
+
+        //
+        VBox form = new VBox(10, 
+            new Label("Bookshelf details"),
+            new Label("Name"), nameField,
+            new Label("Room"), roomField,
+            new Label("Shelf number"), shelfNumberField, buttons);
+
+        form.setPadding(new Insets(10));
+
+        // Makes the form scrollable if necessary
+        ScrollPane scrollPane = new ScrollPane(form);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefWidth(300);
+
+        // Places the form to the right of the table
+        setRight(scrollPane);
     }
 
     /**
