@@ -17,7 +17,6 @@ import javafx.stage.Stage;
  * initialization of the primary JavaFX stage.
  *
  * @author Dilan Shwan
- * @version 1.0
  */
 
 

@@ -10,13 +10,12 @@ import javafx.scene.control.Button;
  *
  * This class organizes the application's different views using
  * a TabPane, allowing users to navigate between books, writers,
- * genres, and bookshelves.
+ * genres, bookshelves, and reports.
  *
  * Contribution: Responsible for the main interface layout,
  * tab navigation, and integration of the application's views.
  *
  * @author Dilan Shwan
- * @version 1.0
  */
 
 public class MainView extends VBox {
@@ -24,10 +23,13 @@ public class MainView extends VBox {
 
     private final TabPane tabPane = new TabPane();
     
+    // Views for displaying books, writers, genres, bookshelves and reports respectively
     private final BookView bookView = new BookView();
     private final WriterView writerView = new WriterView();
     private final GenreView genreView = new GenreView();
     private final BookshelfView bookshelfView = new BookshelfView();
+    private final ReportView reportView = new ReportView();
+
 
     private final Button testDbButton = new Button("Check Database Connection");
 
@@ -35,7 +37,7 @@ public class MainView extends VBox {
     * Constructs the main application view.
     *
     * Initializes the different views, creates their corresponding
-    * non-closable tabs, and adds them to the main TabPane.
+    * non-closable tabs, and adds them to the main TabPane
     */
 
     public MainView() {
@@ -53,11 +55,15 @@ public class MainView extends VBox {
         Tab bookshelfTab = new Tab("Bookshelves", bookshelfView);
         bookshelfTab.setClosable(false);
 
+        Tab reportTab = new Tab("Reports", reportView);
+        reportTab.setClosable(false);
+
         tabPane.getTabs().addAll(
             bookTab,
             writerTab,
             genreTab,
-            bookshelfTab
+            bookshelfTab,
+            reportTab
         );
 
         getChildren().addAll(testDbButton, tabPane);
@@ -81,5 +87,13 @@ public class MainView extends VBox {
 
     public BookshelfView getBookshelfView() {
         return bookshelfView;
+    }
+
+    public ReportView getReportView() {
+        return reportView;
+    }
+
+    public TabPane getTabPane() {
+        return tabPane;
     }
 }

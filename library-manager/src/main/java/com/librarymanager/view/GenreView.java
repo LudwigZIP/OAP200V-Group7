@@ -11,9 +11,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
 
 /**
  * JavaFX view responsible for displaying and managing the user interface
@@ -90,7 +92,7 @@ public class GenreView extends BorderPane {
     public GenreView() {
         buildTable();
         buildForm();
-        setCenter(table);
+
     }
 
     // Create the table columns and connect them to Genre getters.
@@ -124,6 +126,17 @@ public class GenreView extends BorderPane {
         searchField.setPromptText("Search genre...");
         searchBox.getChildren().addAll(
                 new Label("Search:"), searchField);
+        
+        // Allow the search field to expand
+        HBox.setHgrow(searchField, Priority.ALWAYS);
+        searchBox.setPadding(new Insets(10));
+
+        // Place the search bar above the genre table
+        BorderPane tableArea = new BorderPane();
+        tableArea.setTop(searchBox);
+        tableArea.setCenter(table);
+
+        setCenter(tableArea);
 
         // HBox places the label and text field next to each other.
         // The spacing of 10 pixels is the space between the label and the text field.
@@ -136,10 +149,16 @@ public class GenreView extends BorderPane {
         HBox buttonBox = new HBox(10);
         buttonBox.getChildren().addAll(addButton, updateButton, deleteButton);
 
-        // Put the name row and button row in the form, then place it below the table.
-        // The formBox is placed in the bottom area of the BorderPane, which is below the table.
-        formBox.getChildren().addAll(searchBox, nameBox, buttonBox);
-        setBottom(formBox);
+        // Put the name row and button row in the form
+        formBox.getChildren().addAll(nameBox, buttonBox);
+
+        // Allow the form to scroll if necessary
+        ScrollPane scrollPane = new ScrollPane(formBox);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefWidth(300);  
+        
+        // Place the form on the right side of the table
+        setRight(scrollPane);
     }
 
     // Give the controller access to the table to display and select genres.

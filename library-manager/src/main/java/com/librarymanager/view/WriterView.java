@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.ScrollPane;
 
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -94,8 +95,13 @@ public class WriterView extends BorderPane {
 
         form.setPadding(new Insets(15));
 
-        // Places the form at the bottom of the window
-        setBottom(form);
+        // Allow the form to scroll if necessary
+        ScrollPane scrollPane = new ScrollPane(form);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefWidth(300);
+
+        // Places the form at the right side of the window
+        setRight(scrollPane);
     }
 
     /**

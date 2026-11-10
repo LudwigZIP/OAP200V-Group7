@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -19,7 +20,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-
 /**
  * Displays the book table, title search and book input form.
  *
@@ -162,13 +162,13 @@ public class BookView extends BorderPane {
 
         form.setPadding(new Insets(15));
 
-        // Keeps the form at a fixed width beside the table.
-        form.setPrefWidth(300);
-        form.setMinWidth(300);
-        form.setMaxWidth(300);
+        // Allow the form to scroll if necessary
+        ScrollPane scrollPane = new ScrollPane(form);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefWidth(300);
 
-        // Places the form to the right instead of below the table.
-        setRight(form);
+        // Places the form at the right side of the window
+        setRight(scrollPane);
     }
 
     /**

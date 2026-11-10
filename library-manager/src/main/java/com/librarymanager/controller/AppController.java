@@ -60,6 +60,14 @@ public class AppController {
             // Connect the book controller to view and DAO
             new BookController(mainView.getBookView(), bookDao);
 
+            // Connect the report view to its controller using the existing BookDAO
+            ReportController reportController = new ReportController(mainView.getReportView(), bookDao);
+
+            /* Refreshes the report when the user opens the report tab
+            in case the user makes a change to the database after opening the report tab */
+            mainView.getTabPane().getSelectionModel().selectedItemProperty()
+            .addListener((observable, oldTab, newTab) -> {if(newTab.getContent() == mainView.getReportView()) {reportController.refreshReport();}});
+
             // Connect the DB check button
             mainView.getTestDbButton().setOnAction(e -> handleCheckDb());
         } 
