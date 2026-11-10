@@ -10,6 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
+
+import javafx.stage.FileChooser;
+
 public class ReportController {
     
     private final ReportView view;
@@ -20,6 +27,9 @@ public class ReportController {
         this.bookDAO = bookDAO;
 
         view.getRefreshButton().setOnAction( e -> refreshReport());
+
+        // Connects the export button to the file export method
+        view.getExportButton().setOnAction( e -> exportReport());
     }
 
     public void refreshReport() {
@@ -78,6 +88,34 @@ public class ReportController {
 
         catch (RuntimeException e) {
             AlertUtils.showError("Failed to generate report:\n" + e.getMessage());
+        }
+    }
+
+    private void exportReport() {
+
+        // Create a prompt where the user chooses where to save the report
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Library Report");
+
+        // Seggest a default filename and restrict format to .txt
+        fileChooser.setInitialFileName("LibraryReport.txt");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt"));
+
+        // Open the save prompt using the application's current window
+        File file = fileChooser.showSaveDialog(view.getScene().getWindow());
+
+        // Only saves if the user actually selected a file
+        if (file != null) {
+            try {
+
+                // Writes the report text inside the selected file
+                Files.writeString(file.toPath(),view.getReportText(),StandardCharsets.UTF_8);
+
+                AlertUtils.showInfo("Export Successful", "Report saved Successfully!");
+            }
+            catch (IOException e) {
+                AlertUtils.showError("Failed to export report: \n" + e.getMessage());
+            }
         }
     }
 

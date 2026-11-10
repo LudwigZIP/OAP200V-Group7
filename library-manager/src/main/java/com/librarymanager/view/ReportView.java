@@ -21,6 +21,9 @@ public class ReportView extends BorderPane {
     // Displays the generated report and allows the user to refresh it
     private final TextArea reportArea = new TextArea();
     private final Button refreshButton = new Button("Refresh Report");
+    
+    // Displays an export button
+    private final Button exportButton = new Button("Export Report");
 
 
     // Constructs the report view and initializes its components
@@ -43,7 +46,7 @@ public class ReportView extends BorderPane {
     // Creates the toolbar containing the refresh button
     private void buildToolbar() {
 
-        HBox toolbar = new HBox(refreshButton);
+        HBox toolbar = new HBox(10, refreshButton, exportButton);
         toolbar.setPadding(new Insets(5));
 
         setTop(toolbar);
@@ -52,6 +55,14 @@ public class ReportView extends BorderPane {
     // Returns the refresh button so the controller can assign its action
     public Button getRefreshButton() {
         return refreshButton;
+    }
+
+    public Button getExportButton() {
+        return exportButton;
+    }
+
+    public String getReportText() {
+        return reportArea.getText();
     }
 
     // Displays the generated report in the text area
