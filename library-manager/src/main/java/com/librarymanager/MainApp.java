@@ -19,7 +19,6 @@ import javafx.stage.Stage;
  * @author Dilan Shwan
  */
 
-
 public class MainApp extends Application {
 
     private AppController appController;

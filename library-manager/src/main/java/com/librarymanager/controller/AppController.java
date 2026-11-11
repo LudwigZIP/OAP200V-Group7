@@ -19,27 +19,58 @@ import com.librarymanager.util.DatabaseConnection;
 
 import javafx.application.Platform;
 
+/**
+ * Coordinates the initialization and shutdown of the application.
+ *
+ * Establishes the initial database connection, creates the DAOs,
+ * and connects the different views to their controllers.
+ * Also handles database connection checks and report refreshing
+ * when the user selects the Reports tab.
+ *
+ * Contribution: Application initialization, controller setup,
+ * database connection checks, and application shutdown.
+ *
+ * @author Dilan Shwan
+ */
+
 public class AppController {
 
+    // Connection used for checking database availability 
     private Connection conn;
     private final MainView mainView;
 
+    // DAOs used to retrieve and modify data in the database.
     private BookDAO bookDao;
     private BookshelfDAO bookshelfDao;
     private GenreDAO genreDao;
     private WriterDAO writerDao;
 
+    /**
+     * Creates an application controller for the provided main view.
+     *
+     * @param mainView the main application interface
+     */
     public AppController(MainView mainView) {
         this.mainView = mainView;
     }
 
+    /**
+     * Initializes the database connection and application controllers.
+     *
+     * Creates the DAOs, connects controllers to their views, and
+     * loads reference data for the book form. Also assigns actions
+     * to the database connection button and report tab.
+     *
+     * If the initial database connection fails, an error message
+     * is displayed and the application is closed.
+     */
     public void start() {
 
-        // Connects to the db
+        // Connects to the database
         conn = DatabaseConnection.getConnection();
 
         if (conn != null) {
-            // Creates the remaining DAOs when their implementations are available.
+            // Creates the DAOs used by the application controllers.
             bookDao = new BookDAOImpl();
             bookshelfDao = new BookshelfDAOImpl();
             genreDao = new GenreDAOImpl();
@@ -68,7 +99,7 @@ public class AppController {
             mainView.getTabPane().getSelectionModel().selectedItemProperty()
             .addListener((observable, oldTab, newTab) -> {if(newTab.getContent() == mainView.getReportView()) {reportController.refreshReport();}});
 
-            // Connect the DB check button
+            // Connect the DB check method to its button
             mainView.getTestDbButton().setOnAction(e -> handleCheckDb());
         } 
         else {
@@ -77,6 +108,12 @@ public class AppController {
         }
     }
 
+    /**
+     * Checks whether the initial database connection is still valid.
+     *
+     * Displays a confirmation if the connection is active, or an
+     * error message if the connection is invalid or the check fails.
+     */
     public void handleCheckDb() {
         try {
             if (conn != null && conn.isValid(2)) {
@@ -91,13 +128,19 @@ public class AppController {
         }
     }
 
+    /**
+     * Closes the initial database connection when the application stops.
+     *
+     * Checks that the connection exists and is still open before
+     * attempting to close it.
+     */
     public void stop() {
         try {
             if (conn != null && !conn.isClosed()) {
                 conn.close();
             }
         } catch (Exception ignored) {
-            // Ignore shutdown exceptions.
+            // Ignore exceptions when application is shutting down
         }
     }
 }

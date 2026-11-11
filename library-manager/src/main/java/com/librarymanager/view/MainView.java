@@ -11,6 +11,8 @@ import javafx.scene.control.Button;
  * This class organizes the application's different views using
  * a TabPane, allowing users to navigate between books, writers,
  * genres, bookshelves, and reports.
+ * 
+ * Also provieds a button to check the current DB connection.
  *
  * Contribution: Responsible for the main interface layout,
  * tab navigation, and integration of the application's views.
@@ -21,6 +23,7 @@ import javafx.scene.control.Button;
 public class MainView extends VBox {
 
 
+    // Main navigation component containing the application tabs
     private final TabPane tabPane = new TabPane();
     
     // Views for displaying books, writers, genres, bookshelves and reports respectively
@@ -34,14 +37,17 @@ public class MainView extends VBox {
     private final Button testDbButton = new Button("Check Database Connection");
 
     /**
-    * Constructs the main application view.
+    * Constructs the main application interface.
     *
     * Initializes the different views, creates their corresponding
-    * non-closable tabs, and adds them to the main TabPane
+    * non-closable tabs, and adds them to the main TabPane.
+    * Also places the DB connection button above the tab bar
     */
 
     public MainView() {
 
+
+        // Create tabs for the different application views
 
         Tab bookTab = new Tab("Books", bookView);
         bookTab.setClosable(false);
@@ -58,6 +64,7 @@ public class MainView extends VBox {
         Tab reportTab = new Tab("Reports", reportView);
         reportTab.setClosable(false);
 
+        // Add all tabs to the main navigation component
         tabPane.getTabs().addAll(
             bookTab,
             writerTab,
@@ -69,30 +76,68 @@ public class MainView extends VBox {
         getChildren().addAll(testDbButton, tabPane);
     }
 
+    /**
+     * Returns the button used to check the database connection.
+     *
+     * @return the database connection button
+     */
     public Button getTestDbButton() {
         return testDbButton;
     }
 
+    /**
+     * Returns the view used to manage books.
+     *
+     * @return the BookView instance
+     */
     public BookView getBookView() {
         return bookView;
     }
 
+    /**
+     * Returns the view used to manage writers.
+     *
+     * @return the WriterView instance
+     */
     public WriterView getWriterView() {
         return writerView;
     }
 
+    /**
+     * Returns the view used to manage genres.
+     *
+     * @return the GenreView instance
+     */
     public GenreView getGenreView() {
         return genreView;
     }
 
+    /**
+     * Returns the view used to manage bookshelves.
+     *
+     * @return the BookshelfView instance
+     */
     public BookshelfView getBookshelfView() {
         return bookshelfView;
     }
 
+    /**
+     * Returns the view used to display and export library reports.
+     *
+     * @return the ReportView instance
+     */
     public ReportView getReportView() {
         return reportView;
     }
 
+    /**
+     * Returns the main TabPane used for navigation.
+     *
+     * Allows other components to access the selected tab
+     * and listen for navigation changes.
+     *
+     * @return the main TabPane
+     */
     public TabPane getTabPane() {
         return tabPane;
     }
