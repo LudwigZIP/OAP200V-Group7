@@ -93,6 +93,7 @@ public class GenreView extends BorderPane {
     private final Button updateButton = new Button("Update");
     private final Button deleteButton = new Button("Delete");
     private final Button clearButton = new Button("Clear");
+    private final Button clearFilterButton = new Button("Clear Filter");
 
     // Set up the table and form, then place the table in the center of the screen.
     public GenreView() {
@@ -134,12 +135,17 @@ public class GenreView extends BorderPane {
 
         // HBox places the filter label and text field next to each other.
         // The spacing of 10 pixels is the space between the label and the text field.
+        // Add the clear filter button to the filter box so it appears next to the filter field.
+        // The clear filter button allows the user to reset the filter and show all genres in the table.
         HBox filterBox = new HBox(10);
         filterField.setPromptText("Filter genres...");
         filterBox.getChildren().addAll(
-                new Label("Filter:"), filterField);
+            new Label("Filter:"), 
+            filterField,
+            clearFilterButton);   
         
         // Allow the filter field to expand
+        // HBox.setHgrow sets the horizontal grow priority for the filterField to ALWAYS.
         HBox.setHgrow(filterField, Priority.ALWAYS);
         filterBox.setPadding(new Insets(10));
 
@@ -225,6 +231,12 @@ public class GenreView extends BorderPane {
     // @return the Button for clearing the form fields
     public Button getClearButton() {
         return clearButton;
+    }
+
+    // Give the controller access to the Clear Filter button to handle clicks.
+    // @return the Button for clearing the filter field
+    public Button getClearFilterButton() {
+        return clearFilterButton;
     }
 
     // Give the controller access to the description field to handle user input.
