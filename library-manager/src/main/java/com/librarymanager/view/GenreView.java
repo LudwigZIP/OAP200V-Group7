@@ -172,7 +172,7 @@ public class GenreView extends BorderPane {
         buttonBox.getChildren().addAll(addButton, updateButton, deleteButton, clearButton);
 
         // Set up the description field with a label and configure its properties.
-        descriptionField.setPromptText("Enter genre description...");
+        descriptionField.setPromptText("Optional: Enter genre description...");
         descriptionField.setPrefRowCount(4);
 
         // VBox places the label and text area vertically, one on top of the other.
