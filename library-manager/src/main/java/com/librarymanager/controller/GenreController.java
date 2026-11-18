@@ -93,10 +93,10 @@ public class GenreController {
         // The delete button is connected to the deleteGenre method.
         view.getDeleteButton().setOnAction(event -> deleteGenre());
 
-        // Connect the search field to a listener that filters the table as the user types.
-        // The search field's text property is observed for changes.
-        // Filter genres whenever the user types in the search field.
-        view.getSearchField().textProperty().addListener(
+        // Connect the filter field to a listener that filters the table as the user types.
+        // The filter field's text property is observed for changes.
+        // Filter genres whenever the user types in the filter field.
+        view.getFilterField().textProperty().addListener(
                 (observable, oldText, newText) -> {
 
                     String searchText = newText == null

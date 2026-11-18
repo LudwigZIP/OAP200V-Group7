@@ -79,7 +79,7 @@ public class GenreView extends BorderPane {
     private final TextField nameField = new TextField();
 
     // The text field where the user can type a search query to filter genres.
-    private final TextField searchField = new TextField();
+    private final TextField filterField = new TextField();
     // The text area where the user can type a description for the genre.
     private final TextArea descriptionField = new TextArea();
 
@@ -130,20 +130,20 @@ public class GenreView extends BorderPane {
         VBox formBox = new VBox(10);
         formBox.setPadding(new Insets(10));
 
-        // HBox places the search label and text field next to each other.
+        // HBox places the filter label and text field next to each other.
         // The spacing of 10 pixels is the space between the label and the text field.
-        HBox searchBox = new HBox(10);
-        searchField.setPromptText("Search genre...");
-        searchBox.getChildren().addAll(
-                new Label("Search:"), searchField);
+        HBox filterBox = new HBox(10);
+        filterField.setPromptText("Filter genres...");
+        filterBox.getChildren().addAll(
+                new Label("Filter:"), filterField);
         
-        // Allow the search field to expand
-        HBox.setHgrow(searchField, Priority.ALWAYS);
-        searchBox.setPadding(new Insets(10));
+        // Allow the filter field to expand
+        HBox.setHgrow(filterField, Priority.ALWAYS);
+        filterBox.setPadding(new Insets(10));
 
-        // Place the search bar above the genre table
+        // Place the filter bar above the genre table
         BorderPane tableArea = new BorderPane();
-        tableArea.setTop(searchBox);
+        tableArea.setTop(filterBox);
         tableArea.setCenter(table);
 
         setCenter(tableArea);
@@ -195,10 +195,10 @@ public class GenreView extends BorderPane {
         return nameField;
     }
 
-    // Give the controller access to the search field to filter genres.
-    // @return the TextField for entering search queries
-    public TextField getSearchField() {
-        return searchField;
+    // Give the controller access to the filter field to filter genres.
+    // @return the TextField for entering filter queries
+    public TextField getFilterField() {
+        return filterField;
     }
 
     // Give the controller access to the Add button to handle clicks.
