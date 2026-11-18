@@ -156,6 +156,9 @@ public class GenreView extends BorderPane {
 
         setCenter(tableArea);
 
+        // Set the prompt text for the name field to guide the user on what to enter.
+        nameField.setPromptText("Required");
+
         // HBox places the label and text field next to each other.
         // The spacing of 10 pixels is the space between the label and the text field.
         HBox nameBox = new HBox(10);
