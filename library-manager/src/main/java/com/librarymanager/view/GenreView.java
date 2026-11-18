@@ -88,9 +88,11 @@ public class GenreView extends BorderPane {
     // addButton is used to add a new genre to the database.
     // updateButton is used to update an existing genre in the database.
     // deleteButton is used to delete a genre from the database.
+    // clearButton is used to clear the form fields and reset the form.
     private final Button addButton = new Button("Add");
     private final Button updateButton = new Button("Update");
     private final Button deleteButton = new Button("Delete");
+    private final Button clearButton = new Button("Clear");
 
     // Set up the table and form, then place the table in the center of the screen.
     public GenreView() {
@@ -157,7 +159,7 @@ public class GenreView extends BorderPane {
         // The spacing of 10 pixels is the space between each button.
         // The buttons are placed in an HBox so they appear in a row.
         HBox buttonBox = new HBox(10);
-        buttonBox.getChildren().addAll(addButton, updateButton, deleteButton);
+        buttonBox.getChildren().addAll(addButton, updateButton, deleteButton, clearButton);
 
         // Set up the description field with a label and configure its properties.
         descriptionField.setPromptText("Enter genre description...");
@@ -219,6 +221,14 @@ public class GenreView extends BorderPane {
         return deleteButton;
     }
 
+    // Give the controller access to the Clear button to handle clicks.
+    // @return the Button for clearing the form fields
+    public Button getClearButton() {
+        return clearButton;
+    }
+
+    // Give the controller access to the description field to handle user input.
+    // @return the TextArea for entering the genre description
     public TextArea getDescriptionField() {
         return descriptionField;
     }

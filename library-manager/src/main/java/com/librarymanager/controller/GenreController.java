@@ -93,6 +93,8 @@ public class GenreController {
         view.getUpdateButton().setOnAction(event -> updateGenre());
         // The delete button is connected to the deleteGenre method.
         view.getDeleteButton().setOnAction(event -> deleteGenre());
+        // The clear button is connected to the clearForm method, which resets the input fields and table selection.
+        view.getClearButton().setOnAction(event -> clearForm());
 
         // Connect the filter field to a listener that filters the table as the user types.
         // The filter field's text property is observed for changes.
