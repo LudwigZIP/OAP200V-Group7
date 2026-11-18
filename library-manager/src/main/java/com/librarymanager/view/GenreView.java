@@ -154,6 +154,7 @@ public class GenreView extends BorderPane {
         tableArea.setTop(filterBox);
         tableArea.setCenter(table);
 
+        // Place the table area in the center of the BorderPane, which is the main layout of this view.
         setCenter(tableArea);
 
         // Set the prompt text for the name field to guide the user on what to enter.
