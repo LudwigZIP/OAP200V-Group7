@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 /**
  * Controller class responsible for managing genre-related interactions
  * in the Library Manager application.
@@ -99,10 +100,12 @@ public class GenreController {
         view.getFilterField().textProperty().addListener(
                 (observable, oldText, newText) -> {
 
+                    // Normalize the search text by trimming whitespace and converting to lowercase.
                     String searchText = newText == null
                             ? ""
                             : newText.trim().toLowerCase();
 
+                    // Update the predicate of the filtered list to show only genres that match the search text.
                     filteredGenres.setPredicate(genre ->
                             searchText.isEmpty()
                             || genre.getName()
@@ -121,14 +124,22 @@ public class GenreController {
         loadGenres();
     }
 
+    // Checks if a genre name is already taken by another genre in the list.
+    // The method takes a genre name and an optional genre ID to exclude from the check.
     private boolean isGenreNameTaken(String name, Integer excludeGenreId) {
         String normalizedName = name.trim();
 
+        // Check if any existing genre has the same name, ignoring case and whitespace.
+        // If excludeGenreId is provided, that genre is ignored in the check.
         return genreList.stream().anyMatch(existingGenre ->
             (excludeGenreId == null 
+                // If excludeGenreId is null, we are adding a new genre, so we check all existing genres.
                 || existingGenre.getId() != excludeGenreId)
+                // Check if the existing genre's name matches the normalized name, ignoring case and whitespace.
                 && existingGenre.getName() != null 
+                // Ensure that the existing genre's name is not null before comparing.
                 && existingGenre.getName().trim()
+                // Compare the existing genre's name to the normalized name, ignoring case.
                 .equalsIgnoreCase(normalizedName));
     }
 
@@ -146,7 +157,8 @@ public class GenreController {
             showInfo("Genre name is required.");
             return;
         }
-
+        
+        // Check if the genre name is already taken by another genre.
         if (isGenreNameTaken(name, null)) {
             showInfo("A genre with this name already exists.");
             return;
@@ -188,6 +200,7 @@ public class GenreController {
 
         // Read the updated name from the input field.
         String name = view.getNameField().getText();
+        // Read the updated description from the text area.
         String description = view.getDescriptionField().getText();
 
         // Do not allow the name to be empty.
@@ -196,6 +209,7 @@ public class GenreController {
             return;
         }
 
+        // Check if the new name is already taken by another genre, excluding the currently selected genre.
         if (isGenreNameTaken(name, selectedGenre.getId())) {
             showInfo("A genre with this name already exists.");
             return;
@@ -236,6 +250,23 @@ public class GenreController {
         if (selectedGenre == null) {
             showInfo("Select a genre in the table first.");
             return;
+        }
+
+        // Ask the user to confirm the deletion.
+        // A confirmation dialog is displayed to ensure that the user intends to delete the selected genre.
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        // Set the title and content of the confirmation dialog.
+        confirmation.setTitle("Confirm Deletion");
+        // The header text is set to null to remove the default header from the dialog.
+        confirmation.setHeaderText(null);
+        // The content text includes the name of the genre to be deleted, providing context for the user.
+        confirmation.setContentText("Are you sure you want to delete the genre: \""
+             + selectedGenre.getName() + "\"?");
+
+        // Show the confirmation dialog and wait for the user's response.
+        // User canceled the deletion
+        if (confirmation.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return; 
         }
 
         try {
