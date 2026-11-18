@@ -121,6 +121,17 @@ public class GenreController {
         loadGenres();
     }
 
+    private boolean isGenreNameTaken(String name, Integer excludeGenreId) {
+        String normalizedName = name.trim();
+
+        return genreList.stream().anyMatch(existingGenre ->
+            (excludeGenreId == null 
+                || existingGenre.getId() != excludeGenreId)
+                && existingGenre.getName() != null 
+                && existingGenre.getName().trim()
+                .equalsIgnoreCase(normalizedName));
+    }
+
     /**
      * Adds a new genre using the value entered in the form.
      */
@@ -133,6 +144,11 @@ public class GenreController {
         // Do not save an empty genre name.
         if (name == null || name.isBlank()) {
             showInfo("Genre name is required.");
+            return;
+        }
+
+        if (isGenreNameTaken(name, null)) {
+            showInfo("A genre with this name already exists.");
             return;
         }
 
@@ -177,6 +193,11 @@ public class GenreController {
         // Do not allow the name to be empty.
         if (name == null || name.isBlank()) {
             showInfo("Genre name is required.");
+            return;
+        }
+
+        if (isGenreNameTaken(name, selectedGenre.getId())) {
+            showInfo("A genre with this name already exists.");
             return;
         }
 
