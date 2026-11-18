@@ -193,13 +193,14 @@ public class WriterController {
      */
     private void deleteWriter() {
 
-        // Get the selected writer from the table
-        Writer selectedWriter = view.getWriterTable()
-                .getSelectionModel().getSelectedItem();
+    // Get the selected writer from the table
+    Writer selectedWriter = view.getWriterTable()
+            .getSelectionModel().getSelectedItem();
 
-        // Check if a writer is selected
-        if (selectedWriter != null) {
+    // Check if a writer is selected
+    if (selectedWriter != null) {
 
+        try {
             // Delete the writer from the database
             writerDAO.deleteWriter(selectedWriter);
 
@@ -208,8 +209,20 @@ public class WriterController {
 
             // Clear the input fields
             clearForm();
+
+        } catch (RuntimeException e) {
+
+            // Show an error message if deletion fails
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Delete Failed");
+            alert.setHeaderText("Could not delete writer");
+            alert.setContentText(
+                    "The writer could not be deleted. " +
+                    "The writer may have books linked to them.");
+            alert.showAndWait();
         }
     }
+}
 
     /**
      * Loads all writers from the database into the table
