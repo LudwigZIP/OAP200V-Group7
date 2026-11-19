@@ -99,6 +99,16 @@ public class AppController {
             mainView.getTabPane().getSelectionModel().selectedItemProperty()
             .addListener((observable, oldTab, newTab) -> {if(newTab.getContent() == mainView.getReportView()) {reportController.refreshReport();}});
 
+            mainView.getTabPane().getSelectionModel().selectedItemProperty()
+            .addListener((observable, oldTab, newTab) -> {if(newTab.getContent() == mainView.getBookView()) {
+                mainView.getBookView().setReferenceData(
+                    writerDao.findAll(),
+                    genreDao.findAll(),
+                    bookshelfDao.findAll()
+                );
+                }}
+            );
+
             // Connect the DB check method to its button
             mainView.getTestDbButton().setOnAction(e -> handleCheckDb());
         } 
