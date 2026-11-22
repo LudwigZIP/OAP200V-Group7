@@ -27,6 +27,7 @@ import javafx.scene.control.ButtonType;
  * - Adding new genres
  * - Updating existing genres
  * - Deleting selected genres
+ * - Filtering genres based on user search input
  * - Synchronizing table selections with the input form
  * - Validating user input before database operations
  * - Displaying informational and error messages to the user
@@ -36,8 +37,7 @@ import javafx.scene.control.ButtonType;
  * (View), the business data (Model), and the database access layer (DAO).
  *
  * @author Erika Marie Gåsland
- */
-/**
+ * 
  * Controller class for managing genres in the Library Manager application.
  */
 

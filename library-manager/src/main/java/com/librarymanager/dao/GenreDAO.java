@@ -16,7 +16,7 @@ import java.util.List;
  *      including any auto‑generated ID.
  *
  * - findById(int id):
- *      Retrieves a single Genre by its unique identifier.
+ *      Retrieves a single Genre by its ID.
  *
  * - findAll():
  *      Reads and returns a list of all Genre entries stored in the database.
@@ -30,7 +30,7 @@ import java.util.List;
  * Implementations of this interface encapsulate all database logic,
  * supporting clean separation between business logic and persistence.
  * 
- * @author: Erika Marie Gåsland
+ * @author Erika Marie Gåsland
  */
 
 
@@ -41,6 +41,8 @@ public interface GenreDAO {
     // @return the saved genre with its generated ID
     Genre create(Genre genre);
 
+    // Retrieves a genre from the database by its ID
+    // @param id the ID of the genre to retrieve
     Genre findById(int id);
 
     //Reads all genres from the database and returns them as a list

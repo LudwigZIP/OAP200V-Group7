@@ -36,10 +36,9 @@ import java.util.List;
  * logic from the rest of the application to improve maintainability,
  * readability, and testability.
  * 
- * @author: Erika Marie Gåsland
- */
-
-/**
+ * @author Erika Marie Gåsland
+ * 
+ * 
  * Implements the GenreDAO interface.
  *
  * This class is responsible for communicating with the database.

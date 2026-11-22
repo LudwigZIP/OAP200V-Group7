@@ -26,19 +26,26 @@ import javafx.scene.control.TextArea;
  * actions such as adding, updating, or deleting genres.
  *
  * The view is structured using a BorderPane:
- * - The center area contains a TableView that lists all genres.
- * - The bottom area contains a form with a text field and action buttons.
+ * - The center area contains a filter bar and a TableView that lists all genres.
+ * - The right area contains a form for entering genre information and action buttons.
+ * 
  *
  * Main UI components:
  * - TableView<Genre> table:
- *      Displays all genres with two columns: ID and Name.
+ *      Displays all genres with three columns: ID, Name, and Description.
  *      Columns are connected to Genre properties via PropertyValueFactory,
- *      which maps "id" to getId() and "name" to getName().
+ *      which maps "id" to getId() and "name" to getName(), and "description" to getDescription().
  *
  * - TextField nameField:
- *      Allows the user to type the name of a genre when creating or updating entries.
+ *      Used to enter the genre name.
  *
- * - Buttons (Add, Update, Delete):
+ * - TextArea descriptionField:
+ *      Used to enter an optional description for the genre.
+ *
+ * - TextField filterField:
+ *      Used to filter the genres displayed in the table.
+ *
+ * - Buttons (Add, Update, Delete, Clear, Clear Filter):
  *      These buttons do not contain logic themselves; they are exposed through
  *      getter methods so the controller can attach event handlers and define
  *      what happens when the user clicks them.
@@ -49,10 +56,14 @@ import javafx.scene.control.TextArea;
  *
  * - buildForm():
  *      Builds the input form using VBox and HBox containers.
- *      Includes a label + text field row, and a row of action buttons.
- *      The form is placed in the bottom region of the BorderPane.
- *
+ *      Includes input fields for genre name and description,
+ *      together with action buttons for managing genres.
+ *      The form is placed in the right region of the BorderPane,
+ *      while the filter bar and genre table are displayed in the center region.
+ * 
  * Controller interaction:
+ * Getter methods provide access to the table, filter field,
+ * form fields, and action buttons.
  * Getter methods provide access to the table, text field, and buttons.
  * This allows the controller to:
  *      - populate the table with data,
@@ -63,7 +74,7 @@ import javafx.scene.control.TextArea;
  * Overall, GenreView defines the complete user interface for genre management,
  * while delegating all logic and data handling to the controller and DAO layers.
  * 
- * @author: Erika Marie Gåsland
+ * @author Erika Marie Gåsland
  */
 
 
@@ -124,7 +135,7 @@ public class GenreView extends BorderPane {
         table.getColumns().addAll(idColumn, nameColumn, descriptionColumn);
     }
 
-    // Arrange the name field and action buttons below the table.
+    // Arrange the form fields and action buttons on the right side of the view.
     // The form is placed in a VBox, which stacks its children vertically.
     // The name field and its label are placed in an HBox, which arranges them horizontally.
     private void buildForm() {
