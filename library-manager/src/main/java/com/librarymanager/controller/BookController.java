@@ -2,63 +2,56 @@ package com.librarymanager.controller;
 
 import com.librarymanager.dao.BookDAO;
 import com.librarymanager.model.Book;
+import com.librarymanager.model.Writer;
 import com.librarymanager.view.BookView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 
 /**
- * Handles adding, viewing, updating, deleting and searching books.
+ * Handles book operations, search, filtering and input validation.
  *
  * @author Ulrik Marker
  */
 public class BookController {
 
-    // DAO used to access book data.
     private final BookDAO bookDAO;
-
-    // Reference to the book view.
     private final BookView view;
 
-    // List of books displayed in the table.
-    private final ObservableList<Book> bookList;
+    // Complete collection and the books currently displayed.
+    private final List<Book> allBooks = new ArrayList<>();
+    private final ObservableList<Book> bookList =
+            FXCollections.observableArrayList();
 
-    /**
-     * Creates a controller with access to the view and DAO.
-     *
-     * @param view the book view
-     * @param bookDAO the DAO used to manage books
-     */
     public BookController(BookView view, BookDAO bookDAO) {
         this.view = view;
         this.bookDAO = bookDAO;
-        this.bookList = FXCollections.observableArrayList();
-
         initialize();
     }
 
     /**
-     * Connects the table, buttons, search field and row selection.
+     * Connects the view controls to controller actions.
      */
     private void initialize() {
-
-        // Displays the controller's book list in the table.
         view.getBookTable().setItems(bookList);
 
-        // Connects the book action buttons.
         view.getAddButton().setOnAction(event -> addBook());
         view.getUpdateButton().setOnAction(event -> updateBook());
         view.getDeleteButton().setOnAction(event -> deleteBook());
+        view.getClearButton().setOnAction(event -> clearAll());
 
-        // Searches when the Search button is clicked.
+        // Search is performed by clicking Search or pressing Enter.
         view.getSearchButton().setOnAction(event -> searchBooks());
-
-        // Also searches when Enter is pressed in the search field.
         view.getSearchField().setOnAction(event -> searchBooks());
+        view.getFilterYearField().setOnAction(event -> searchBooks());
 
-        // Displays the selected book in the input fields.
         view.getBookTable().getSelectionModel()
                 .selectedItemProperty()
                 .addListener((observable, oldBook, selectedBook) -> {
@@ -67,24 +60,38 @@ public class BookController {
                     }
                 });
 
-        // Loads registered books when the controller starts.
         loadBooks();
     }
 
     /**
-     * Displays the selected book in the input fields.
-     *
-     * @param book the selected book
+     * Loads books without clearing the form or filter controls.
+     * Previously displayed results remain if loading fails.
+     */
+    public void loadBooks() {
+        try {
+            List<Book> loadedBooks = bookDAO.findAll();
+
+            allBooks.clear();
+            allBooks.addAll(loadedBooks);
+            bookList.setAll(allBooks);
+        } catch (RuntimeException exception) {
+            showMessage(
+                    Alert.AlertType.ERROR,
+                    "Loading failed",
+                    "Books could not be loaded. Check the database connection.");
+        }
+    }
+
+    /**
+     * Displays a selected book in the input form.
      */
     private void populateForm(Book book) {
         view.getTitleField().setText(book.getTitle());
 
-        // Displays an empty field when the year is unknown.
         Integer year = book.getPublicationYear();
         view.getYearField().setText(
                 year == null ? "" : year.toString());
 
-        // Selects the current status and related objects.
         view.getStatusField().setValue(book.getReadingStatus());
         view.getWriterField().setValue(book.getWriter());
         view.getGenreField().setValue(book.getGenre());
@@ -92,137 +99,297 @@ public class BookController {
     }
 
     /**
-     * Adds a new book using the input fields.
+     * Validates the form and returns a new Book object.
+     * Does not modify the selected book.
      */
-    private void addBook() {
+    private Book readBookForm() {
+        String title = view.getTitleField().getText().trim();
 
-        // Creates a new book from the form values.
-        Book book = new Book(
-                view.getTitleField().getText(),
-                readYear(),
-                view.getStatusField().getValue(),
+        if (title.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Title is required. Enter a book title.");
+        }
+
+        Integer year = parseYear(
+                view.getYearField().getText(), "Publication year");
+
+        String status = view.getStatusField().getValue();
+
+        if (!"Unread".equals(status)
+                && !"Reading".equals(status)
+                && !"Read".equals(status)) {
+            throw new IllegalArgumentException(
+                    "Reading status is required. Select Unread, Reading or Read.");
+        }
+
+        if (view.getWriterField().getValue() == null) {
+            throw new IllegalArgumentException(
+                    "Writer is required. Select a writer.");
+        }
+
+        if (view.getGenreField().getValue() == null) {
+            throw new IllegalArgumentException(
+                    "Genre is required. Select a genre.");
+        }
+
+        if (view.getBookshelfField().getValue() == null) {
+            throw new IllegalArgumentException(
+                    "Bookshelf is required. Select a bookshelf.");
+        }
+
+        // The model also applies its own validation.
+        return new Book(
+                title,
+                year,
+                status,
                 view.getWriterField().getValue(),
                 view.getGenreField().getValue(),
                 view.getBookshelfField().getValue());
-
-        // Saves the book and assigns its generated database ID.
-        bookDAO.save(book);
-
-        // Reloads the complete collection.
-        loadBooks();
     }
 
     /**
-     * Loads all books and resets the search and input form.
+     * Reads an optional positive integer year.
      */
-    public void loadBooks() {
-        List<Book> books = bookDAO.findAll();
-
-        // Replaces the displayed list with all registered books.
-        bookList.setAll(books);
-
-        // Clears the search because the complete list is displayed.
-        view.getSearchField().clear();
-
-        clearForm();
-    }
-
-    /**
-     * Searches for books whose titles contain the entered text.
-     * An empty search displays all books.
-     */
-    private void searchBooks() {
-
-        // Removes whitespace before and after the search text.
-        String text = view.getSearchField().getText().trim();
-
-        if (text.isEmpty()) {
-            loadBooks();
-            return;
-        }
-
-        // Retrieves matching books from the database.
-        List<Book> results = bookDAO.findByTitle(text);
-
-        // Displays only the matching books.
-        bookList.setAll(results);
-
-        // Removes the previous selection and its form values.
-        clearForm();
-    }
-
-    /**
-     * Updates the selected book using the input fields.
-     */
-    private void updateBook() {
-        Book selectedBook = view.getBookTable()
-                .getSelectionModel().getSelectedItem();
-
-        if (selectedBook != null) {
-
-            // Changes the selected book's values.
-            selectedBook.setTitle(view.getTitleField().getText());
-            selectedBook.setPublicationYear(readYear());
-            selectedBook.setReadingStatus(
-                    view.getStatusField().getValue());
-            selectedBook.setWriter(view.getWriterField().getValue());
-            selectedBook.setGenre(view.getGenreField().getValue());
-            selectedBook.setBookshelf(
-                    view.getBookshelfField().getValue());
-
-            // Saves the changes and reloads the collection.
-            bookDAO.update(selectedBook);
-            loadBooks();
-        }
-    }
-
-    /**
-     * Deletes the selected book.
-     */
-    private void deleteBook() {
-        Book selectedBook = view.getBookTable()
-                .getSelectionModel().getSelectedItem();
-
-        if (selectedBook != null) {
-
-            // Deletes the database record using the book ID.
-            bookDAO.delete(selectedBook.getId());
-
-            // Reloads the remaining books.
-            loadBooks();
-        }
-    }
-
-    /**
-     * Reads the optional publication year.
-     *
-     * @return the year, or null if the field is empty
-     */
-    private Integer readYear() {
-        String text = view.getYearField().getText().trim();
+    private Integer parseYear(String input, String fieldName) {
+        String text = input.trim();
 
         if (text.isEmpty()) {
             return null;
         }
 
-        // Converts the entered text to an integer.
-        return Integer.valueOf(text);
+        try {
+            int year = Integer.parseInt(text);
+
+            if (year <= 0) {
+                throw new IllegalArgumentException(
+                        fieldName + " must be greater than zero.");
+            }
+
+            return year;
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException(
+                    fieldName
+                            + " must be a valid whole number, for example 1997.");
+        }
     }
 
     /**
-     * Clears the table selection and input fields.
+     * Adds a book only after all form values have been validated.
+     */
+    private void addBook() {
+        Book book;
+
+        try {
+            book = readBookForm();
+        } catch (IllegalArgumentException exception) {
+            showValidationError(exception.getMessage());
+            return;
+        }
+
+        try {
+            bookDAO.save(book);
+        } catch (RuntimeException exception) {
+            showMessage(
+                    Alert.AlertType.ERROR,
+                    "Save failed",
+                    "The save operation could not be completed. "
+                            + "Check the database before trying again.");
+            return;
+        }
+
+        clearAll();
+    }
+
+    /**
+     * Updates a selected book after validating all input.
+     */
+    private void updateBook() {
+        Book selectedBook = view.getBookTable()
+                .getSelectionModel().getSelectedItem();
+
+        if (selectedBook == null) {
+            showValidationError(
+                    "Select a book in the table before updating.");
+            return;
+        }
+
+        Book updatedBook;
+
+        try {
+            updatedBook = readBookForm();
+
+            // Keeps the database ID without changing the original row.
+            updatedBook.setId(selectedBook.getId());
+        } catch (IllegalArgumentException exception) {
+            showValidationError(exception.getMessage());
+            return;
+        }
+
+        try {
+            bookDAO.update(updatedBook);
+        } catch (RuntimeException exception) {
+            showMessage(
+                    Alert.AlertType.ERROR,
+                    "Update failed",
+                    "The book could not be updated. "
+                            + "Check the database connection and try again.");
+            return;
+        }
+
+        clearAll();
+    }
+
+    /**
+     * Deletes a selected book only after explicit confirmation.
+     */
+    private void deleteBook() {
+        Book selectedBook = view.getBookTable()
+                .getSelectionModel().getSelectedItem();
+
+        if (selectedBook == null) {
+            showValidationError(
+                    "Select a book in the table before deleting.");
+            return;
+        }
+
+        ButtonType deleteButton = new ButtonType(
+                "Delete", ButtonBar.ButtonData.OK_DONE);
+
+        ButtonType cancelButton = new ButtonType(
+                "Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        Alert confirmation = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                "Are you sure you want to delete \""
+                        + selectedBook.getTitle() + "\"?",
+                deleteButton,
+                cancelButton);
+
+        confirmation.setTitle("Delete book");
+        confirmation.setHeaderText("Confirm deletion");
+        setAlertOwner(confirmation);
+
+        // Cancel and closing the dialog leave the book unchanged.
+        if (confirmation.showAndWait().orElse(cancelButton)
+                != deleteButton) {
+            return;
+        }
+
+        try {
+            bookDAO.delete(selectedBook.getId());
+        } catch (RuntimeException exception) {
+            showMessage(
+                    Alert.AlertType.ERROR,
+                    "Delete failed",
+                    "The book could not be deleted. "
+                            + "Check the database connection and try again.");
+            return;
+        }
+
+        clearAll();
+    }
+
+    /**
+     * Combines optional title, writer and exact-year criteria.
+     * Filtering does not clear the book input form.
+     */
+    private void searchBooks() {
+        Integer year;
+
+        try {
+            year = parseYear(
+                    view.getFilterYearField().getText(),
+                    "Search year");
+        } catch (IllegalArgumentException exception) {
+            showValidationError(exception.getMessage());
+            return;
+        }
+
+        String title = view.getSearchField().getText()
+                .trim().toLowerCase(Locale.ROOT);
+
+        Writer writer = view.getWriterFilter().getValue();
+        List<Book> results = new ArrayList<>();
+
+        for (Book book : allBooks) {
+            boolean matchesTitle = book.getTitle()
+                    .toLowerCase(Locale.ROOT).contains(title);
+
+            // Compares database IDs rather than object references.
+            boolean matchesWriter = writer == null
+                    || (book.getWriter() != null
+                    && book.getWriter().getId() == writer.getId());
+
+            boolean matchesYear = year == null
+                    || year.equals(book.getPublicationYear());
+
+            if (matchesTitle && matchesWriter && matchesYear) {
+                results.add(book);
+            }
+        }
+
+        // Suppresses form population while replacing table results.
+        // Existing form input is kept.
+        view.getBookTable().getSelectionModel().clearSelection();
+        bookList.setAll(results);
+    }
+
+    /**
+     * Resets search, filters and the form, then reloads all books.
+     * Does not delete any database records.
+     */
+    private void clearAll() {
+        view.getSearchField().clear();
+        view.getFilterYearField().clear();
+        view.getWriterFilter().setValue(null);
+
+        clearForm();
+        loadBooks();
+    }
+
+    /**
+     * Clears the selected row and book input controls.
      */
     private void clearForm() {
         view.getBookTable().getSelectionModel().clearSelection();
 
         view.getTitleField().clear();
         view.getYearField().clear();
-
-        // Uses the same status value as the dropdown list.
         view.getStatusField().setValue("Unread");
-
         view.getWriterField().setValue(null);
         view.getGenreField().setValue(null);
         view.getBookshelfField().setValue(null);
+    }
+
+    /**
+     * Displays instructions for correcting invalid input.
+     */
+    private void showValidationError(String message) {
+        showMessage(
+                Alert.AlertType.WARNING, "Invalid input", message);
+    }
+
+    /**
+     * Displays feedback in an application-owned dialog.
+     */
+    private void showMessage(
+            Alert.AlertType type, String title, String message) {
+
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        setAlertOwner(alert);
+        alert.showAndWait();
+    }
+
+    /**
+     * Associates a dialog with the application window when available.
+     */
+    private void setAlertOwner(Alert alert) {
+        if (view.getScene() != null
+                && view.getScene().getWindow() != null) {
+            alert.initOwner(view.getScene().getWindow());
+        }
     }
 }
