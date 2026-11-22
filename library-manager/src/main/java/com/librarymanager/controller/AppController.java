@@ -89,7 +89,7 @@ public class AppController {
             );
 
             // Connect the book controller to view and DAO
-            new BookController(mainView.getBookView(), bookDao);
+            BookController bookController = new BookController(mainView.getBookView(), bookDao);
 
             // Connect the report view to its controller using the existing BookDAO
             ReportController reportController = new ReportController(mainView.getReportView(), bookDao);
@@ -106,6 +106,7 @@ public class AppController {
                     genreDao.findAll(),
                     bookshelfDao.findAll()
                 );
+                bookController.loadBooks();
                 }}
             );
 
