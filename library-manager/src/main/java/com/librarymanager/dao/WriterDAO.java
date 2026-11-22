@@ -4,7 +4,12 @@ import com.librarymanager.model.Writer;
 import java.util.List;
 
 /**
- * Data-access contract for writer persistence operations.
+ * DAO interface for managing writer data in the Library Manager application.
+ *
+ * This interface defines methods for creating, updating, deleting
+ * and retrieving writers, as well as checking for duplicate names.
+ * The actual database operations are handled by the class
+ * that implements this interface.
  *
  * @author Mia Bro Auganes
  */

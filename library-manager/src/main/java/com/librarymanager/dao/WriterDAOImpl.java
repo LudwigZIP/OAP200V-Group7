@@ -12,10 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements database operations for writers.
- * 
+ * DAO implementation for managing writer data
+ *
+ * This class implements the methods defined in the WriterDAO interface.
+ * Uses SQL queries to create, update, delete and retrieve writers
+ * from the database, and checking for duplicate writer names.
+ *
  * @author Mia Bro Auganes
  */
+
 public class WriterDAOImpl implements WriterDAO {
 
     /**

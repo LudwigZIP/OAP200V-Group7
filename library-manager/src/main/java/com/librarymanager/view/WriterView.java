@@ -18,7 +18,11 @@ import javafx.geometry.Insets;
 
 /**
  * View class for displaying and managing writers
- * in the Library Manager application.
+ * 
+ * This class creates the user interface for writers, including
+ * a table, input fields and buttons for adding, updating and deleting writers.
+ * It is responsible for displaying writer information, while
+ * the WriterController handles user actions and database operations.
  *
  * @author Mia Bro Auganes
  */

@@ -13,15 +13,27 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- * Controller class for managing writers in the Library Manager application
+ * Controller class for managing writers.
+ * This class acts as a link between the WriterView and WriterDAO.
+ * It handles user actions from the interface, performs CRUD
+ * operations through the DAO layer, and updates the user interface.
+ *
+ *   The controller is responsible for:
+ * - Loading writers from the database and displaying them in the table
+ * - Adding new writers
+ * - Updating existing writer information
+ * - Deleting selected writers
+ * - Checking for duplicate writer names
+ * - Synchronizing table selections with the input fields
+ * - Displaying error and confirmation messages to the user
  * 
  * @author Mia Bro Auganes
  */
 public class WriterController {
-    // DAO used to access writer data
+    // DAO used to access writer data in the database
     private final WriterDAO writerDAO;
 
-    // Reference to the writer view
+    // Reference to the writer view, containing the writer table, input fields and buttons.
     private final WriterView view;
 
     // List of writers displayed in the table
@@ -29,8 +41,10 @@ public class WriterController {
 
     /**
      * Creates a controller with access to the view and DAO.
+     * The constructor creates the writer list and initializes
+     * the connection between the controller and the view. 
      *
-     * @param view      the writer view
+     * @param view the writer view
      * @param writerDAO the DAO used to manage writers
      */
     public WriterController(WriterView view, WriterDAO writerDAO) {
@@ -43,7 +57,8 @@ public class WriterController {
     }
 
     /**
-     * Initializes the controller and connects the writer list to the table
+     * Initializes the controller and connects the writer list to the table.
+     * This method also loads existing writers from the database when the controller starts.
      */
     private void initialize() {
 
@@ -83,7 +98,7 @@ public class WriterController {
     }
 
     /**
-     * Adds a new writer using the input fields
+     * Adds a new writer using the information entered in the input fields
      */
     private void addWriter() {
 
@@ -94,7 +109,7 @@ public class WriterController {
 
         // Check if the input fields are empty
         if (firstName.isEmpty() || lastName.isEmpty() || nationality.isBlank()) {
-            // Show an error message
+            // Show an error message and inform the user that all fields must be completed
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Input");
             alert.setHeaderText("Missing information");
@@ -107,13 +122,13 @@ public class WriterController {
         if (!confirmWriterIfExists(firstName, lastName, null)) {
             return;
         }
-        // Create a new writer object
+        // Create a new writer object using the entered information
         Writer writer = new Writer(firstName, lastName, nationality);
 
         // Save the writer to the database
         Writer savedWriter = writerDAO.create(writer);
 
-        // Add the saved writer to the table
+        // Add the saved writer to the list displayed in the table
         writerList.add(savedWriter);
 
         // Clear the input fields
@@ -128,12 +143,12 @@ public class WriterController {
      */
     private boolean confirmWriterIfExists(String firstName, String lastName, Integer excludedId) {
 
-        // Check if the writer already exists
+        // Check if the writer already exists in the database, if not the operation continue
         if (!writerDAO.existsWriter(firstName, lastName, excludedId)) {
             return true;
         }
 
-        // Show a confirmation dialog
+        // Show a confirmation dialog if a duplicate exists. The user choose to continue or cancel
         Alert confirmation = new Alert(
                 Alert.AlertType.CONFIRMATION,
                 "A writer named " + firstName + " " + lastName
@@ -159,7 +174,7 @@ public class WriterController {
         Writer selectedWriter = view.getWriterTable()
                 .getSelectionModel().getSelectedItem();
 
-        // Check if a writer is selected
+        // Check if a writer has been selected
         if (selectedWriter != null) {
 
             // Get the updated input from the text fields
@@ -171,7 +186,7 @@ public class WriterController {
             if (!confirmWriterIfExists(firstName, lastName, selectedWriter.getId())) {
                 return;
             }
-            // Update the writer object
+            // Update the selected writer object with new information
             selectedWriter.setFirstName(firstName);
             selectedWriter.setLastName(lastName);
             selectedWriter.setNationality(nationality);
@@ -201,7 +216,7 @@ public class WriterController {
     if (selectedWriter != null) {
 
         try {
-            // Delete the writer from the database
+            // Delete the writer from the database, the deletion may failed of books are linked to the writer
             writerDAO.deleteWriter(selectedWriter);
 
             // Reload the writers in the table
@@ -212,7 +227,7 @@ public class WriterController {
 
         } catch (RuntimeException e) {
 
-            // Show an error message if deletion fails
+            // Show an error message if deletion fails, and explain that the writer may have books linked to them
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Delete Failed");
             alert.setHeaderText("Could not delete writer");
@@ -237,7 +252,8 @@ public class WriterController {
     }
 
     /**
-     * Clears the input fields and table selection
+     * Clears the input fields.
+     * This method is used after adding, updating or deleting a writer. 
      */
     private void clearForm() {
         // Clear the first and last name field
