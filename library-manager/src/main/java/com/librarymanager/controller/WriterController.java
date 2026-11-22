@@ -18,7 +18,7 @@ import javafx.collections.ObservableList;
  * It handles user actions from the interface, performs CRUD
  * operations through the DAO layer, and updates the user interface.
  *
- *   The controller is responsible for:
+ * The controller is responsible for:
  * - Loading writers from the database and displaying them in the table
  * - Adding new writers
  * - Updating existing writer information
@@ -33,7 +33,8 @@ public class WriterController {
     // DAO used to access writer data in the database
     private final WriterDAO writerDAO;
 
-    // Reference to the writer view, containing the writer table, input fields and buttons.
+    // Reference to the writer view, containing the writer table, input fields and
+    // buttons.
     private final WriterView view;
 
     // List of writers displayed in the table
@@ -42,9 +43,9 @@ public class WriterController {
     /**
      * Creates a controller with access to the view and DAO.
      * The constructor creates the writer list and initializes
-     * the connection between the controller and the view. 
+     * the connection between the controller and the view.
      *
-     * @param view the writer view
+     * @param view      the writer view
      * @param writerDAO the DAO used to manage writers
      */
     public WriterController(WriterView view, WriterDAO writerDAO) {
@@ -58,7 +59,8 @@ public class WriterController {
 
     /**
      * Initializes the controller and connects the writer list to the table.
-     * This method also loads existing writers from the database when the controller starts.
+     * This method also loads existing writers from the database when the controller
+     * starts.
      */
     private void initialize() {
 
@@ -108,7 +110,7 @@ public class WriterController {
         String nationality = view.getNationalityField().getText();
 
         // Check if the input fields are empty
-        if (firstName.isEmpty() || lastName.isEmpty() || nationality.isBlank()) {
+        if (firstName.isBlank() || lastName.isBlank() || nationality.isBlank()) {
             // Show an error message and inform the user that all fields must be completed
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Input");
@@ -143,12 +145,14 @@ public class WriterController {
      */
     private boolean confirmWriterIfExists(String firstName, String lastName, Integer excludedId) {
 
-        // Check if the writer already exists in the database, if not the operation continue
+        // Check if the writer already exists in the database, if not the operation
+        // continue
         if (!writerDAO.existsWriter(firstName, lastName, excludedId)) {
             return true;
         }
 
-        // Show a confirmation dialog if a duplicate exists. The user choose to continue or cancel
+        // Show a confirmation dialog if a duplicate exists. The user choose to continue
+        // or cancel
         Alert confirmation = new Alert(
                 Alert.AlertType.CONFIRMATION,
                 "A writer named " + firstName + " " + lastName
@@ -182,6 +186,16 @@ public class WriterController {
             String lastName = view.getLastNameField().getText();
             String nationality = view.getNationalityField().getText();
 
+            // Check if the input fields are empty
+            if (firstName.isBlank() || lastName.isBlank() || nationality.isBlank()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Input");
+                alert.setHeaderText("Missing information");
+                alert.setContentText("Please enter first name, last name and nationality.");
+                alert.showAndWait();
+                return;
+            }
+
             // Check if another writer with the same name already exists
             if (!confirmWriterIfExists(firstName, lastName, selectedWriter.getId())) {
                 return;
@@ -208,36 +222,38 @@ public class WriterController {
      */
     private void deleteWriter() {
 
-    // Get the selected writer from the table
-    Writer selectedWriter = view.getWriterTable()
-            .getSelectionModel().getSelectedItem();
+        // Get the selected writer from the table
+        Writer selectedWriter = view.getWriterTable()
+                .getSelectionModel().getSelectedItem();
 
-    // Check if a writer is selected
-    if (selectedWriter != null) {
+        // Check if a writer is selected
+        if (selectedWriter != null) {
 
-        try {
-            // Delete the writer from the database, the deletion may failed of books are linked to the writer
-            writerDAO.deleteWriter(selectedWriter);
+            try {
+                // Delete the writer from the database, the deletion may failed of books are
+                // linked to the writer
+                writerDAO.deleteWriter(selectedWriter);
 
-            // Reload the writers in the table
-            loadWriters();
+                // Reload the writers in the table
+                loadWriters();
 
-            // Clear the input fields
-            clearForm();
+                // Clear the input fields
+                clearForm();
 
-        } catch (RuntimeException e) {
+            } catch (RuntimeException e) {
 
-            // Show an error message if deletion fails, and explain that the writer may have books linked to them
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Delete Failed");
-            alert.setHeaderText("Could not delete writer");
-            alert.setContentText(
-                    "The writer could not be deleted. " +
-                    "The writer may have books linked to them.");
-            alert.showAndWait();
+                // Show an error message if deletion fails, and explain that the writer may have
+                // books linked to them
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Delete Failed");
+                alert.setHeaderText("Could not delete writer");
+                alert.setContentText(
+                        "The writer could not be deleted. " +
+                                "The writer may have books linked to them.");
+                alert.showAndWait();
+            }
         }
     }
-}
 
     /**
      * Loads all writers from the database into the table
@@ -253,7 +269,7 @@ public class WriterController {
 
     /**
      * Clears the input fields.
-     * This method is used after adding, updating or deleting a writer. 
+     * This method is used after adding, updating or deleting a writer.
      */
     private void clearForm() {
         // Clear the first and last name field

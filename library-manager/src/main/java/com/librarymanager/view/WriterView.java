@@ -79,6 +79,11 @@ public class WriterView extends BorderPane {
      */
     private void buildForm() {
 
+         // Placeholder text for required fields
+        firstNameField.setPromptText("Required");
+        lastNameField.setPromptText("Required");
+        nationalityField.setPromptText("Required");
+
         // Labels for the input fields
         Label firstNameLabel = new Label("First Name");
         Label lastNameLabel = new Label("Last Name");
