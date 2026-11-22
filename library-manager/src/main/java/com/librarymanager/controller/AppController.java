@@ -79,7 +79,7 @@ public class AppController {
             // Connect controllers to their view and DAOs
             new WriterController(mainView.getWriterView(), writerDao);
             new BookshelfController(mainView.getBookshelfView(), bookshelfDao);
-            new GenreController(mainView.getGenreView(), genreDao);
+            new GenreController(mainView.getGenreView(), genreDao, bookDao);
             
             // Load writers, genres and bookshelves into book view
             mainView.getBookView().setReferenceData(

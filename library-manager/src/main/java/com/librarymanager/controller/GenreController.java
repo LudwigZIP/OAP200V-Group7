@@ -3,6 +3,7 @@ package com.librarymanager.controller;
 import java.util.List;
 import java.util.Objects;
 
+import com.librarymanager.dao.BookDAO;
 import com.librarymanager.dao.GenreDAO;
 import com.librarymanager.model.Genre;
 import com.librarymanager.view.GenreView;
@@ -54,17 +55,23 @@ public class GenreController {
     // This filtered list allows the user to search and filter genres in the table.
     private final FilteredList<Genre> filteredGenres;
 
+    // DAO used to check if a genre is associated with any books before deletion.
+    private final BookDAO bookDAO;
+
     /**
      * Creates a controller with access to the genre view and DAO.
      *
      * @param view the genre view
      * @param genreDAO the DAO used to manage genres
+     * @param bookDAO the DAO used to manage books
      */
-    public GenreController(GenreView view, GenreDAO genreDAO) {
+    public GenreController(GenreView view, GenreDAO genreDAO, BookDAO bookDAO) {
         // Ensure that the view and DAO are not null.
         this.view = Objects.requireNonNull(view, "view");
         // Ensure that the DAO is not null.
         this.genreDAO = Objects.requireNonNull(genreDAO, "genreDAO");
+        // Ensure that the book DAO is not null.
+        this.bookDAO = Objects.requireNonNull(bookDAO, "bookDAO");
         // Create an observable list to hold the genres displayed in the table.
         this.genreList = FXCollections.observableArrayList();
         // Create a filtered list that wraps the observable list, allowing for search and filtering.
@@ -274,6 +281,13 @@ public class GenreController {
         }
 
         try {
+            // Check if the genre is associated with any books before deletion.
+            // If the genre is used by any books, inform the user and do not delete it.
+            if (!bookDAO.findByGenre(selectedGenre.getId()).isEmpty()) {
+                showInfo("Cannot delete this genre because one or more books use it.");
+                return;
+            }
+
             // Delete the selected genre using its database ID.
             // The genreDAO.delete method is called with the ID of the selected genre.
             genreDAO.delete(selectedGenre.getId());

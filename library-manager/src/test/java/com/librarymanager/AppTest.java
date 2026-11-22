@@ -6,6 +6,8 @@ import org.junit.Test;
 
 /**
  * Unit test for simple App.
+ * 
+ * @author Mia Bro Auganes
  */
 public class AppTest 
 {
