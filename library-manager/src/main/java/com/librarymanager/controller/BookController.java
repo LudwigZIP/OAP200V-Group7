@@ -12,11 +12,13 @@ import java.util.Locale;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
 /**
- * Handles book operations, search, filtering and input validation.
+ * Handles book operations, search, filtering, input validation
+ * and duplicate warnings.
  *
  * @author Ulrik Marker
  */
@@ -174,7 +176,7 @@ public class BookController {
     }
 
     /**
-     * Adds a book only after all form values have been validated.
+     * Adds a book after validation and duplicate confirmation.
      */
     private void addBook() {
         Book book;
@@ -184,6 +186,43 @@ public class BookController {
         } catch (IllegalArgumentException exception) {
             showValidationError(exception.getMessage());
             return;
+        }
+
+        List<Book> existingBooks;
+
+        try {
+            // Checks fresh database data, including books hidden by filters.
+            existingBooks = bookDAO.findAll();
+        } catch (RuntimeException exception) {
+            showMessage(
+                    Alert.AlertType.ERROR,
+                    "Duplicate check failed",
+                    "Existing books could not be checked. "
+                            + "Check the database connection and try again.");
+            return;
+        }
+
+        for (Book existing : existingBooks) {
+
+            // Ignores letter case and surrounding whitespace.
+            boolean sameTitle = existing.getTitle().trim()
+                    .equalsIgnoreCase(book.getTitle().trim());
+
+            // Compares writer IDs rather than object references.
+            boolean sameWriter = existing.getWriter() != null
+                    && existing.getWriter().getId()
+                    == book.getWriter().getId();
+
+            if (sameTitle && sameWriter) {
+
+                // Cancellation preserves the form and stops the save.
+                if (!confirmDuplicate(book)) {
+                    return;
+                }
+
+                // Asks only once, even if multiple copies already exist.
+                break;
+            }
         }
 
         try {
@@ -198,6 +237,46 @@ public class BookController {
         }
 
         clearAll();
+    }
+
+    /**
+     * Asks whether to add a book with an existing title and writer.
+     *
+     * @param book the book being added
+     * @return true if the user chooses Add anyway
+     */
+    private boolean confirmDuplicate(Book book) {
+        ButtonType addAnywayButton = new ButtonType(
+                "Add anyway", ButtonBar.ButtonData.OK_DONE);
+
+        ButtonType cancelButton = new ButtonType(
+                "Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        Alert warning = new Alert(
+                Alert.AlertType.WARNING,
+                "A book with the title \"" + book.getTitle()
+                        + "\" by " + book.getWriter()
+                        + " is already registered.\n\n"
+                        + "Do you still want to add this book?",
+                addAnywayButton,
+                cancelButton);
+
+        warning.setTitle("Possible duplicate");
+        warning.setHeaderText("This book may already be registered");
+        setAlertOwner(warning);
+
+        // Makes Cancel the default action when Enter is pressed.
+        Button addButton = (Button) warning.getDialogPane()
+                .lookupButton(addAnywayButton);
+        addButton.setDefaultButton(false);
+
+        Button cancel = (Button) warning.getDialogPane()
+                .lookupButton(cancelButton);
+        cancel.setDefaultButton(true);
+
+        // Closing the dialog also cancels the operation.
+        return warning.showAndWait().orElse(cancelButton)
+                == addAnywayButton;
     }
 
     /**
@@ -328,7 +407,7 @@ public class BookController {
             }
         }
 
-        // Suppresses form population while replacing table results.
+        // Clears the selection before replacing results.
         // Existing form input is kept.
         view.getBookTable().getSelectionModel().clearSelection();
         bookList.setAll(results);
