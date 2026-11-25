@@ -31,7 +31,7 @@ import javafx.scene.control.TextArea;
  * 
  *
  * Main UI components:
- * - TableView<Genre> table:
+* - {@code TableView<Genre>} table:
  *      Displays all genres with three columns: ID, Name, and Description.
  *      Columns are connected to Genre properties via PropertyValueFactory,
  *      which maps "id" to getId() and "name" to getName(), and "description" to getDescription().
