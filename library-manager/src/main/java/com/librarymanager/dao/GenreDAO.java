@@ -36,25 +36,38 @@ import java.util.List;
 
 public interface GenreDAO {
 
-    // Creates a new genre in the database and returns the created genre with its generated id
-    // @param genre the genre object to save
-    // @return the saved genre with its generated ID
+    /**
+     * Creates a new genre in the database and returns the created genre with its generated id
+     * @param genre the genre object to save
+     * @return the saved genre with its generated ID
+     */
     Genre create(Genre genre);
 
-    // Retrieves a genre from the database by its ID
+    /**
+     * Retrieves a genre from the database by its ID
+     * @param id the ID of the genre to retrieve
+     * @return the retrieved genre
+     */
     // @param id the ID of the genre to retrieve
     Genre findById(int id);
 
-    //Reads all genres from the database and returns them as a list
+    /**
+     * Reads all genres from the database and returns them as a list
+     * @return a list of all genres
+     */
     // Returns a list of all genres in the database
     // @return a list of all genres
     List<Genre> findAll();
 
-    // Updates an existing genre in the database
-    // @param genre the genre object with updated information
+    /**
+     * Updates an existing genre in the database
+     * @param genre the genre object with updated information
+     */
     void update(Genre genre);
 
-    // Deletes a genre from the database by its ID
-    // @param id the ID of the genre to delete
+    /**
+     * Deletes a genre from the database by its ID
+     * @param id the ID of the genre to delete
+     */
     void delete(int id);
 }
