@@ -75,12 +75,17 @@ import javafx.scene.control.TextArea;
  * while delegating all logic and data handling to the controller and DAO layers.
  * 
  * @author Erika Marie Gåsland
+ **/
+
+
+/** 
+ * This view builds the screen for working with genres.
+ * The table shows genres, and the form lets the user enter a genre name.
+ * BorderPane provides areas where the table and form can be placed.
+ * This view builds the screen for working with genres.
+ * The table shows genres, and the form lets the user enter a genre name.
+ * BorderPane provides areas where the table and form can be placed.
  */
-
-
-// This view builds the screen for working with genres.
-// The table shows genres, and the form lets the user enter a genre name.
-// BorderPane provides areas where the table and form can be placed.
 public class GenreView extends BorderPane {
 
     // Displays the genre records. The controller will supply the table's data.
@@ -94,12 +99,14 @@ public class GenreView extends BorderPane {
     // The text area where the user can type a description for the genre.
     private final TextArea descriptionField = new TextArea();
 
-    // These buttons let the user request genre actions.
-    // The controller will decide what happens when each button is clicked.
-    // addButton is used to add a new genre to the database.
-    // updateButton is used to update an existing genre in the database.
-    // deleteButton is used to delete a genre from the database.
-    // clearButton is used to clear the form fields and reset the form.
+    /**
+     * These buttons let the user request genre actions.
+     * The controller will decide what happens when each button is clicked.
+     * // addButton is used to add a new genre to the database.
+     * // updateButton is used to update an existing genre in the database.
+     * // deleteButton is used to delete a genre from the database.
+     * // clearButton is used to clear the form fields and reset the form.
+     */
     private final Button addButton = new Button("Add");
     private final Button updateButton = new Button("Update");
     private final Button deleteButton = new Button("Delete");
@@ -135,19 +142,25 @@ public class GenreView extends BorderPane {
         table.getColumns().addAll(idColumn, nameColumn, descriptionColumn);
     }
 
-    // Arrange the form fields and action buttons on the right side of the view.
-    // The form is placed in a VBox, which stacks its children vertically.
-    // The name field and its label are placed in an HBox, which arranges them horizontally.
+    /**
+     * Arrange the form fields and action buttons on the right side of the view.
+     * The form is placed in a VBox, which stacks its children vertically.
+     * The name field and its label are placed in an HBox, which arranges them horizontally.
+     */
     private void buildForm() {
-        // VBox places its children in a vertical column; 10 is the spacing.
-        // Insets adds padding around the VBox so the form is not right against the table.
+        /**
+         * VBox places its children in a vertical column; 10 is the spacing.
+         * Insets adds padding around the VBox so the form is not right against the table.
+         */
         VBox formBox = new VBox(10);
         formBox.setPadding(new Insets(10));
 
-        // HBox places the filter label and text field next to each other.
-        // The spacing of 10 pixels is the space between the label and the text field.
-        // Add the clear filter button to the filter box so it appears next to the filter field.
-        // The clear filter button allows the user to reset the filter and show all genres in the table.
+        /**
+         * HBox places the filter label and text field next to each other.
+         * The spacing of 10 pixels is the space between the label and the text field.
+         * Add the clear filter button to the filter box so it appears next to the filter field.
+         * The clear filter button allows the user to reset the filter and show all genres in the table.
+         */
         HBox filterBox = new HBox(10);
         filterField.setPromptText("Filter genres...");
         filterBox.getChildren().addAll(
@@ -155,8 +168,10 @@ public class GenreView extends BorderPane {
             filterField,
             clearFilterButton);   
         
-        // Allow the filter field to expand
-        // HBox.setHgrow sets the horizontal grow priority for the filterField to ALWAYS.
+        /**
+         * Allow the filter field to expand
+         * HBox.setHgrow sets the horizontal grow priority for the filterField to ALWAYS.
+         */
         HBox.setHgrow(filterField, Priority.ALWAYS);
         filterBox.setPadding(new Insets(10));
 
@@ -171,14 +186,18 @@ public class GenreView extends BorderPane {
         // Set the prompt text for the name field to guide the user on what to enter.
         nameField.setPromptText("Required");
 
-        // HBox places the label and text field next to each other.
-        // The spacing of 10 pixels is the space between the label and the text field.
+        /**
+         * HBox places the label and text field next to each other.
+         * The spacing of 10 pixels is the space between the label and the text field.
+         */
         HBox nameBox = new HBox(10);
         nameBox.getChildren().addAll(new Label("Genre name:"), nameField);
 
-        // Place the three action buttons next to each other.
-        // The spacing of 10 pixels is the space between each button.
-        // The buttons are placed in an HBox so they appear in a row.
+        /**
+         * Place the three action buttons next to each other.
+         * The spacing of 10 pixels is the space between each button.
+         * The buttons are placed in an HBox so they appear in a row.
+         */
         HBox buttonBox = new HBox(10);
         buttonBox.getChildren().addAll(addButton, updateButton, deleteButton, clearButton);
 
@@ -186,9 +205,11 @@ public class GenreView extends BorderPane {
         descriptionField.setPromptText("Optional: Enter genre description...");
         descriptionField.setPrefRowCount(4);
 
-        // VBox places the label and text area vertically, one on top of the other.
-        // The VBox is used to group the label and text area together.
-        // The spacing of 5 pixels is the space between the label and the text area.
+        /**
+         * VBox places the label and text area vertically, one on top of the other.
+         * The VBox is used to group the label and text area together.
+         * The spacing of 5 pixels is the space between the label and the text area.
+         */
         VBox descriptionBox = new VBox(5);
         descriptionBox.getChildren().addAll(new Label("Description:"), descriptionField);
 
@@ -206,56 +227,74 @@ public class GenreView extends BorderPane {
        
     }
 
-    // Give the controller access to the table to display and select genres.
-    // @return the TableView that displays genres
+    /**
+     * Give the controller access to the table to display and select genres.
+     * @return the TableView that displays genres
+     */
     public TableView<Genre> getGenreTable() {
         return table;
     }
 
-    // Give the controller access to the text the user entered.
-    // @return the TextField for entering the genre name
+    /**
+     * Give the controller access to the text the user entered.
+     * @return the TextField for entering the genre name
+     */
     public TextField getNameField() {
         return nameField;
     }
 
-    // Give the controller access to the filter field to filter genres.
-    // @return the TextField for entering filter queries
+    /**
+     * Give the controller access to the filter field to filter genres.
+     * @return the TextField for entering filter queries
+     */
     public TextField getFilterField() {
         return filterField;
     }
 
-    // Give the controller access to the Add button to handle clicks.
-    // @return the Button for adding a new genre
+    /**
+     * Give the controller access to the Add button to handle clicks.
+     * @return the Button for adding a new genre
+     */
     public Button getAddButton() {
         return addButton;
     }
 
-    // Give the controller access to the Update button to handle clicks.
-    // @return the Button for updating an existing genre
+    /**
+     * Give the controller access to the Update button to handle clicks.
+     * @return the Button for updating an existing genre
+     */
     public Button getUpdateButton() {
         return updateButton;
     }
 
-    // Give the controller access to the Delete button to handle clicks.
-    // @return the Button for deleting a genre
+    /**
+     * Give the controller access to the Delete button to handle clicks.
+     * @return the Button for deleting a genre
+     */
     public Button getDeleteButton() {
         return deleteButton;
     }
 
-    // Give the controller access to the Clear button to handle clicks.
-    // @return the Button for clearing the form fields
+    /**
+     * Give the controller access to the Clear button to handle clicks.
+     * @return the Button for clearing the form fields
+     */
     public Button getClearButton() {
         return clearButton;
     }
 
-    // Give the controller access to the Clear Filter button to handle clicks.
-    // @return the Button for clearing the filter field
+    /**
+     * Give the controller access to the Clear Filter button to handle clicks.
+     * @return the Button for clearing the filter field
+     */
     public Button getClearFilterButton() {
         return clearFilterButton;
     }
 
-    // Give the controller access to the description field to handle user input.
-    // @return the TextArea for entering the genre description
+    /**
+     * Give the controller access to the description field to handle user input.
+     * @return the TextArea for entering the genre description
+     */
     public TextArea getDescriptionField() {
         return descriptionField;
     }

@@ -88,13 +88,17 @@ public class GenreController {
      * table selection to the view.
      */
     private void initialize() {
-        // Display the genre list in the table.
-        // The table's items are set to the filtered list, which allows for dynamic filtering based on user input.
+        /**
+         * Display the genre list in the table.
+         * The table's items are set to the filtered list, which allows for dynamic filtering based on user input.
+         */
         view.getGenreTable().setItems(filteredGenres);
 
-        // Connect each button to the method that handles its action.
-        // The controller handles the logic when the user clicks a button.
-        // The add button is connected to the addGenre method.
+        /**
+         * Connect each button to the method that handles its action.
+         * The controller handles the logic when the user clicks a button.
+         * The add button is connected to the addGenre method.
+         */
         view.getAddButton().setOnAction(event -> addGenre());
         // The update button is connected to the updateGenre method.
         view.getUpdateButton().setOnAction(event -> updateGenre());
@@ -105,9 +109,11 @@ public class GenreController {
         // The clear filter button is connected to an action that clears the filter field, resetting the table to show all genres.
         view.getClearFilterButton().setOnAction(event -> view.getFilterField().clear());
 
-        // Connect the filter field to a listener that filters the table as the user types.
-        // The filter field's text property is observed for changes.
-        // Filter genres whenever the user types in the filter field.
+        /**
+         * Connect the filter field to a listener that filters the table as the user types.
+         * The filter field's text property is observed for changes.
+         * Filter genres whenever the user types in the filter field.
+         */
         view.getFilterField().textProperty().addListener(
                 (observable, oldText, newText) -> {
 
@@ -124,8 +130,10 @@ public class GenreController {
                                     .contains(searchText));
                 });
 
-        // Display the selected genre in the input field.
-        // When the user selects a row in the table, the populateForm method is called.
+        /**
+         * Display the selected genre in the input field.
+         * When the user selects a row in the table, the populateForm method is called.
+         */
         view.getGenreTable().getSelectionModel()
                 .selectedItemProperty()
                 .addListener((observable, oldGenre, selectedGenre) ->
@@ -135,13 +143,17 @@ public class GenreController {
         loadGenres();
     }
 
-    // Checks if a genre name is already taken by another genre in the list.
-    // The method takes a genre name and an optional genre ID to exclude from the check.
+    /**
+     * Checks if a genre name is already taken by another genre in the list.
+     * The method takes a genre name and an optional genre ID to exclude from the check.
+     */
     private boolean isGenreNameTaken(String name, Integer excludeGenreId) {
         String normalizedName = name.trim();
 
-        // Check if any existing genre has the same name, ignoring case and whitespace.
-        // If excludeGenreId is provided, that genre is ignored in the check.
+        /**
+         * Check if any existing genre has the same name, ignoring case and whitespace.
+         * If excludeGenreId is provided, that genre is ignored in the check.
+         */
         return genreList.stream().anyMatch(existingGenre ->
             (excludeGenreId == null 
                 // If excludeGenreId is null, we are adding a new genre, so we check all existing genres.
@@ -179,9 +191,11 @@ public class GenreController {
             // Create and save the new genre through the DAO.
             genreDAO.create(new Genre(name.trim(), description.trim()));
 
-            // Refresh the table and clear the form.
-            // After adding a new genre, reload the list of genres from the database.
-            // This ensures that the table shows the most up-to-date data, including the newly added genre.
+            /**
+             * Refresh the table and clear the form.
+             * After adding a new genre, reload the list of genres from the database.
+             * This ensures that the table shows the most up-to-date data, including the newly added genre.
+             */
             loadGenres();
             // Clear the input field and table selection to prepare for the next entry.
             clearForm();
@@ -202,8 +216,10 @@ public class GenreController {
                 .getSelectionModel()
                 .getSelectedItem();
 
-        // An update requires a selected genre.
-        // If no genre is selected, inform the user and exit the method.
+        /**
+         * An update requires a selected genre.
+         * If no genre is selected, inform the user and exit the method.
+         */
         if (selectedGenre == null) {
             showInfo("Select a genre in the table first.");
             return;
@@ -227,15 +243,19 @@ public class GenreController {
         }
 
         try {
-            // Update the selected object and save it in the database.
-            // The selectedGenre object is modified with the new name.
+            /**
+             * Update the selected object and save it in the database.
+             * The selectedGenre object is modified with the new name.
+             */
             selectedGenre.setName(name.trim());
             selectedGenre.setDescription(description.trim());
             genreDAO.update(selectedGenre);
 
-            // Refresh the table and clear the form.
-            // After updating a genre, reload the list of genres from the database.
-            // This ensures that the table shows the most up-to-date data, including the updated genre
+            /**
+             * Refresh the table and clear the form.
+             * After updating a genre, reload the list of genres from the database.
+             * This ensures that the table shows the most up-to-date data, including the updated genre
+             */
             loadGenres();
             // Clear the input field and table selection to prepare for the next action.
             clearForm();
@@ -251,8 +271,10 @@ public class GenreController {
      * Deletes the selected genre from the database.
      */
     private void deleteGenre() {
-        // Get the genre currently selected in the table.
-        // The selected genre is retrieved from the table's selection model.
+        /**
+         * Get the genre currently selected in the table.
+         * The selected genre is retrieved from the table's selection model.
+         */
         Genre selectedGenre = view.getGenreTable()
                 .getSelectionModel()
                 .getSelectedItem();
@@ -263,8 +285,10 @@ public class GenreController {
             return;
         }
 
-        // Ask the user to confirm the deletion.
-        // A confirmation dialog is displayed to ensure that the user intends to delete the selected genre.
+        /**
+         * Ask the user to confirm the deletion.
+         * A confirmation dialog is displayed to ensure that the user intends to delete the selected genre.
+         */
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         // Set the title and content of the confirmation dialog.
         confirmation.setTitle("Confirm Deletion");
@@ -274,27 +298,35 @@ public class GenreController {
         confirmation.setContentText("Are you sure you want to delete the genre: \""
              + selectedGenre.getName() + "\"?");
 
-        // Show the confirmation dialog and wait for the user's response.
-        // User canceled the deletion
+        /**
+         * Show the confirmation dialog and wait for the user's response.
+         * User canceled the deletion
+         */
         if (confirmation.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
             return; 
         }
 
         try {
-            // Check if the genre is associated with any books before deletion.
-            // If the genre is used by any books, inform the user and do not delete it.
+            /**
+             * Check if the genre is associated with any books before deletion.
+             * If the genre is used by any books, inform the user and do not delete it.
+             */
             if (!bookDAO.findByGenre(selectedGenre.getId()).isEmpty()) {
                 showInfo("Cannot delete this genre because one or more books use it.");
                 return;
             }
 
-            // Delete the selected genre using its database ID.
-            // The genreDAO.delete method is called with the ID of the selected genre.
+            /**
+             * Delete the selected genre using its database ID.
+             * The genreDAO.delete method is called with the ID of the selected genre.
+             */
             genreDAO.delete(selectedGenre.getId());
 
-            // Refresh the table and clear the form.
-            // After deleting a genre, reload the list of genres from the database.
-            // This ensures that the table shows the most up-to-date data, excluding the deleted genre.
+            /**
+             * Refresh the table and clear the form.
+             * After deleting a genre, reload the list of genres from the database.
+             * This ensures that the table shows the most up-to-date data, excluding the deleted genre.
+             */
             loadGenres();
             // Clear the input field and table selection to prepare for the next action.
             clearForm();
@@ -313,12 +345,16 @@ public class GenreController {
      */
     private void loadGenres() {
         try {
-            // Retrieve all genres from the database.
-            // The genreDAO.findAll() method returns a list of all genres stored in the database.
+            /**
+             * Retrieve all genres from the database.
+             * The genreDAO.findAll() method returns a list of all genres stored in the database.
+             */
             List<Genre> genres = genreDAO.findAll();
 
-            // Replace the table contents with the database results.
-            // The genreList observable list is updated with the new data.
+            /**
+             * Replace the table contents with the database results.
+             * The genreList observable list is updated with the new data.
+             */
             genreList.setAll(genres);
         } catch (RuntimeException e) {
             // Inform the user if loading fails.
@@ -333,8 +369,10 @@ public class GenreController {
      * @param genre the selected genre, or null when the selection is cleared
      */
     private void populateForm(Genre genre) {
-        // Clear the field when the table selection is removed.
-        // If the genre parameter is null, it means no genre is selected in the table.
+        /**
+         * Clear the field when the table selection is removed.
+         * If the genre parameter is null, it means no genre is selected in the table.
+         */
         if (genre == null) {
             clearFields();
             return;
@@ -358,8 +396,10 @@ public class GenreController {
         // Remove the selected row from the table.
         view.getGenreTable().getSelectionModel().clearSelection();
 
-        // Clear the input field.
-        // The clearFields method is called to remove any text from the genre name input field.
+        /**
+         * Clear the input field.
+         * The clearFields method is called to remove any text from the genre name input field.
+         */
         clearFields();
     }
 
@@ -369,8 +409,10 @@ public class GenreController {
      * allowing the user to enter new data without affecting the current table selection.
      */
     private void clearFields() {
-        // Remove the text currently entered in the genre field.
-        // The getNameField().clear() method is called to clear the text from the input field.
+        /**
+         * Remove the text currently entered in the genre field.
+         * The getNameField().clear() method is called to clear the text from the input field.
+         */
         view.getNameField().clear();
         view.getDescriptionField().clear();
     }
@@ -381,8 +423,10 @@ public class GenreController {
      * @param message the message to display
      */
     private void showInfo(String message) {
-        // Display an information dialog to the user.
-        // The Alert class is used to create a pop-up dialog that shows the message.
+        /**
+         * Display an information dialog to the user.
+         * The Alert class is used to create a pop-up dialog that shows the message.
+         */
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         // Set the title and content of the alert dialog.
         alert.setTitle("Genre");
@@ -399,14 +443,20 @@ public class GenreController {
      *
      * @param message the error description
      * @param exception the exception that caused the error
+     * 
+     * The showError method is used to display an error dialog when an operation fails.
+     * It takes a message describing the error and the exception that caused it.
      */
-    // The showError method is used to display an error dialog when an operation fails.
-    // It takes a message describing the error and the exception that caused it.
     private void showError(String message, RuntimeException exception) {
-        // Display an error dialog when an operation fails.
+        /**
+         * Display an error dialog when an operation fails.
+         * The Alert class is used to create a pop-up dialog that shows the error.
+         */
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        // Set the title, header, and content of the error dialog.
-        // The title is set to "Genre Error" to indicate the context of the error.
+        /**
+         * Set the title, header, and content of the error dialog.
+         * The title is set to "Genre Error" to indicate the context of the error.
+         */
         alert.setTitle("Genre Error");
         // The header text is set to the message describing the error.
         alert.setHeaderText(message);
